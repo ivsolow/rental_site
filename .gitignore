@@ -1,0 +1,10 @@
+.pytest_cache
+.covarage
+logic.txt
+Прокат тз.docx
+__pycache__/
+.env
+.idea
+/djangoenv
+/cache
+.pytest_cache
