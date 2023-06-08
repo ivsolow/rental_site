@@ -1,15 +1,14 @@
-from django.db.models import Sum
 from django.urls import reverse
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
-from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
-from cart.views import CartViewSet
-from equipment.models import Equipment
-from rentals.models import Rentals
-from .serializers import PaymentSerializer, PaymentCheckSerializer
+from services.check_cart_equipment import availability_check
+from services.payment import get_confirmation_url
+from services.payment_status import get_payment_status
+from services.yookassa_webhook import validate_and_create_payment
+from .serializers import PaymentSerializer, PaymentStatusSerializer
 
 
 class CartCheckViewSet(viewsets.ModelViewSet):
@@ -24,48 +23,55 @@ class CartCheckViewSet(viewsets.ModelViewSet):
     Если в корзине больше, чем свободно, то возвращается сообщение об ошибке,
     если все ок - идет перенаправление на оплату
     """
-    serializer_class = PaymentCheckSerializer
     permission_classes = [IsAuthenticated, ]
 
     def list(self, request, *args, **kwargs):
-        cart_viewset = CartViewSet()
-        response = cart_viewset.list(request)
-        cart_items = response.data['cart_items']
-
-        for item in cart_items:
-            equipment = get_object_or_404(Equipment, name=item['equipment']['name'])
-            date_start = item['dates']['date_start']
-            date_end = item['dates']['date_end']
-
-            occupied_amount = Rentals.objects.filter(
-                equipment=equipment,
-                date_start__lte=date_end,
-                date_end__gte=date_start
-            ).aggregate(total_amount=Sum('amount'))['total_amount'] or 0
-
-            available_amount = equipment.amount - occupied_amount
-            if item['amount'] > available_amount:
-                difference = item['amount'] - available_amount
-                error_message = "Снаряжение на некоторые даты недоступно, проверьте корзину"
-                error_data = {
-                    'difference': difference,
-                    'equipment_name': equipment.name,
-                    'date_start': date_start,
-                    'date_end': date_end,
-                    'message': error_message
-                }
-                return Response(error_data, status=status.HTTP_400_BAD_REQUEST)
+        result = availability_check(request)
+        if not result:
+            return Response('Корзина пуста', status=status.HTTP_400_BAD_REQUEST)
+        elif isinstance(result, dict):
+            return Response(result, status=status.HTTP_400_BAD_REQUEST)
         return redirect(reverse('payment'))
 
 
 class PaymentApiView(APIView):
+    """Формирование запроса на оплату и отправка запроса Юкассе"""
     serializer_class = PaymentSerializer
     permission_classes = [IsAuthenticated, ]
 
+    def post(self, request, *args, **kwargs):
+        serializer = PaymentSerializer(data=request.POST)
+        if serializer.is_valid():
+            serialized_data = serializer.validated_data
+        else:
+            answer = 'Serialized data is not valid!'
+            return Response(answer, status=status.HTTP_400_BAD_REQUEST)
+        payment_summ = serialized_data.get('total_summ')
+        commission = serialized_data.get('commission')
+        user = request.user
+        confirmation_url = get_confirmation_url(user, payment_summ, commission)
+
+        return Response(confirmation_url, status=status.HTTP_200_OK)
+
+
+class YookassaResponseApiView(APIView):
+    """Получение и обработка вебхука от Юкассы"""
+
+    def post(self, response):
+        webhook_data = response.data
+        if not validate_and_create_payment(webhook_data):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_200_OK)
+
+
+class PaymentStatusApiView(APIView):
+    """Представление для получения статуса оплаты"""
+    serializer_class = PaymentStatusSerializer
+    permission_classes = [IsAuthenticated, ]
+
     def post(self, request):
-        serializer = self.serializer_class(data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        result = serializer.save()
-
-        return Response(result, status=status.HTTP_200_OK)
-
+        idempotence_key = request.data['idempotence_key']
+        payment_status = get_payment_status(idempotence_key)
+        if payment_status:
+            return Response(payment_status, status=status.HTTP_200_OK)
+        return Response({"error": "Invalid idempotence_key"}, status=status.HTTP_204_NO_CONTENT)

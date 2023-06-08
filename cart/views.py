@@ -3,7 +3,7 @@ from datetime import date
 from django.db.models.functions import Concat
 from rest_framework import viewsets, status
 from django.db.models import Sum, F, IntegerField, Case, When, Value, CharField
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from cart.models import Cart
 from cart.serializers import AddCartSerializer, EquipmentAvailabilitySerializer, \
@@ -75,7 +75,6 @@ class CartViewSet(viewsets.ViewSet):
 
     def list(self, request):
         user = request.user
-
         queryset = (
             Cart.objects
             .filter(user=user)  # Фильтрация по пользователю

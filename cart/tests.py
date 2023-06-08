@@ -1,5 +1,5 @@
 import datetime
-
+from equipment.tests import equipment_1, equipment_2
 from cart.models import Cart
 import pytest
 from django.urls import reverse
@@ -14,37 +14,11 @@ from users.models import CustomUser
 def user():
     # Создание пользователя
     user = CustomUser.objects.create_user(
+        id=1,
         email='testuser',
         password='testpassword123_'
     )
     return user
-
-
-@pytest.fixture
-def equipment_1():
-    # Создание объекта снаряжения
-    category = Category.objects.create(name='Hiking')
-    equipment = Equipment.objects.create(
-        name='Tent MSR Freelite 2',
-        category=category,
-        description='Good balance of weight & livability for solo hikers',
-        price=1000,
-        amount=10
-    )
-    return equipment
-
-
-@pytest.fixture
-def equipment_2():
-    category = Category.objects.create(name='Bikes')
-    equipment = Equipment.objects.create(
-        name='Giant Trance Advanced Pro',
-        category=category,
-        description='best for enduro mountain bike',
-        price=3000,
-        amount=5
-    )
-    return equipment
 
 
 @pytest.fixture
@@ -62,6 +36,19 @@ def cart_create(api_client, equipment_1):
         'amount': 3,
         'date_start': '2023-05-20',
         'date_end': '2023-05-22'
+    }
+    response = api_client.post(url, data)
+    return response
+
+
+@pytest.fixture
+def cart_create_2(api_client, equipment_2):
+    url = reverse('add_cart')
+    data = {
+        'equipment': equipment_2.id,
+        'amount': 1,
+        'date_start': '2023-05-25',
+        'date_end': '2023-05-28'
     }
     response = api_client.post(url, data)
     return response
@@ -241,67 +228,3 @@ def test_cart_availability(equipment_1, equipment_2, api_client, user):
     print(response.data)
     assert response.data[0]['available_amount'] == 5
     assert response.data[1]['available_amount'] == 10
-
-
-
-#
-# @pytest.mark.django_db
-# def test_create_cart_item_existing(api_client, user, cart):
-#     # Создаем авторизованного клиента API
-#     client = APIClient()
-#     client.force_authenticate(user=user)
-#
-#     # Отправляем POST-запрос на создание существующей позиции корзины
-#     url = reverse('add_cart')
-#     data = {
-#         'equipment': cart.equipment.id,
-#         'amount': 1,
-#         'date_start': cart.date_start,
-#         'date_end': cart.date_end
-#     }
-#     response = client.post(url, data)
-#
-#     # Проверяем, что запрос завершился успешно (статус 200 OK)
-#     assert response.status_code == status.HTTP_200_OK
-#
-#     # Проверяем структуру и данные возвращаемого ответа
-#     assert 'name' in response.data
-#     assert 'amount' in response.data
-#
-#     assert response.data['name'] == str(cart.equipment.id)
-#     assert response.data['amount'] == str(cart.amount + 1)
-#
-#
-
-#
-#
-# @pytest.fixture
-# def cart(user, equipment):
-#     # Создаем тестовую позицию корзины
-#     cart = Cart.objects.create(
-#         user=user,
-#         equipment=equipment,
-#         amount=1,
-#         date_start='2023-05-20',
-#         date_end='2023-05-22'
-#     )
-#     return cart
-#
-
-#
-# @pytest.mark.django_db
-# def test_list_cart_items(api_client, user, cart):
-#     # Тест для получения списка позиций корзины
-#     pass
-#
-#
-# @pytest.mark.django_db
-# def test_create_cart_item(api_client, user, equipment):
-#     # Тест для создания новой позиции корзины
-#     pass
-#
-#
-# @pytest.mark.django_db
-# def test_create_cart_item_existing(api_client, user, cart):
-#     # Тест для создания существующей позиции корзины
-#     pass

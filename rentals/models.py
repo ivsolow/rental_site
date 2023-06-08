@@ -12,8 +12,7 @@ class Rentals(models.Model):
     date_end = models.DateField(default=timezone.now)
     is_started = models.BooleanField(default=False)
     is_closed = models.BooleanField(default=False)
-    # feedback = models.ForeignKey('feedback.Feedback', on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.equipment.name
+        return self.equipment.name + f'{self.date_start} - {self.date_end}'
 

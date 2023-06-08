@@ -37,7 +37,7 @@ class Upload:
 
 def upload_path(instance, filename):
     """Определяем имена файлов и путь для папки хранения фотографий снаряжения"""
-    name = instance.equipment_1.name
+    name = instance.equipment.name
     if name in Upload.NAME_CACHE:
         Upload.PHOTO_ID += 1
     else:
@@ -45,7 +45,7 @@ def upload_path(instance, filename):
         Upload.NAME_CACHE.add(name)
         Upload.PHOTO_ID = 1
     filename = '{}_{}.{}'.format(name, Upload.PHOTO_ID, filename.split('.')[-1].lower())
-    return '{}/{}'.format(instance.equipment_1.category, filename)
+    return '{}/{}'.format(instance.equipment.category, filename)
 
 
 class EquipPhoto(models.Model):

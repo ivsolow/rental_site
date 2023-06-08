@@ -1,5 +1,5 @@
 .pytest_cache
-.covarage
+.coverage
 logic.txt
 Прокат тз.docx
 __pycache__/
@@ -8,3 +8,4 @@ __pycache__/
 /djangoenv
 /cache
 .pytest_cache
+.env

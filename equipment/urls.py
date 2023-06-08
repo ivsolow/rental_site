@@ -3,7 +3,7 @@ from django.urls import include, path
 from equipment.views import EquipmentViewSet
 
 router = routers.DefaultRouter()
-router.register(r'api/v1/equipment', EquipmentViewSet)
+router.register(r'api/v1/equipment', EquipmentViewSet, basename='equipment')
 
 urlpatterns = [
     path('', include(router.urls)),
