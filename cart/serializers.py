@@ -1,7 +1,8 @@
 from rest_framework import serializers
+
 from cart.models import Cart
-from equipment.models import Equipment, EquipPhoto
-from rentals.models import Rentals
+from equipment.models import Equipment
+from services.equipment.available_equipment import get_equipment_photo
 
 
 class CartEquipmentSerializer(serializers.ModelSerializer):
@@ -12,11 +13,7 @@ class CartEquipmentSerializer(serializers.ModelSerializer):
     amount = serializers.IntegerField()
 
     def get_photo(self, obj):
-        try:
-            equip_photo = EquipPhoto.objects.get(equipment=obj)
-            return equip_photo.photo.url
-        except EquipPhoto.DoesNotExist:
-            return None
+        return get_equipment_photo(obj)
 
     class Meta:
         model = Equipment
@@ -47,29 +44,3 @@ class AddCartSerializer(serializers.ModelSerializer):
         model = Cart
         fields = ['id', 'user', 'equipment', 'amount', 'date_start', 'date_end']
         read_only_fields = ['user', ]
-
-
-class EquipmentAvailabilitySerializer(serializers.ModelSerializer):
-    date_start = serializers.DateField()
-    date_end = serializers.DateField()
-
-    class Meta:
-        model = Rentals
-        fields = '__all__'
-
-
-class AvailableEquipmentSerializer(serializers.ModelSerializer):
-    available_amount = serializers.IntegerField()
-    category = serializers.CharField()
-    photo = serializers.SerializerMethodField()
-
-    def get_photo(self, obj):
-        try:
-            equip_photo = EquipPhoto.objects.get(equipment=obj)
-            return equip_photo.photo.url
-        except EquipPhoto.DoesNotExist:
-            return None
-
-    class Meta:
-        model = Equipment
-        exclude = ['amount', ]

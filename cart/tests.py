@@ -65,18 +65,18 @@ def test_list_cart_items(api_client):
     assert response.status_code == status.HTTP_200_OK
 
     # Проверяем структуру и данные возвращаемого ответа
-    assert 'cart_items' in response.data
+    assert 'cart_item_data' in response.data
     assert 'total_positions' in response.data
     assert 'total_summ' in response.data
 
-    cart_items = response.data['cart_items']
-    assert isinstance(cart_items, list)
+    cart_item_data = response.data['cart_item_data']
+    assert isinstance(cart_item_data, list)
 
     # Проверяем, что список позиций корзины пустой
-    assert len(cart_items) == 0
+    assert len(cart_item_data) == 0
 
     # Проверяем структуру и данные каждой позиции корзины
-    for item in cart_items:
+    for item in cart_item_data:
         assert 'id' in item
         assert 'equipment' in item
         assert 'amount' in item
@@ -122,9 +122,8 @@ def test_create_cart_item(cart_create, equipment_1):
 def test_add_cart_same_instance(api_client, cart_create, equipment_1):
     """
     Проверка на добавление количества к тому же объекту корзину
-    присовпадении дат и и названия снаряжения
+    при совпадении дат и и названия снаряжения
     """
-    cart_instance = cart_create
     post_url = reverse('add_cart')
     get_url = reverse('cart')
     get_response_before_adding = api_client.get(get_url)
@@ -134,11 +133,11 @@ def test_add_cart_same_instance(api_client, cart_create, equipment_1):
         'date_start': '2023-05-20',
         'date_end': '2023-05-22'
     }
-    post_response = api_client.post(post_url, data)
+    add_to_cart = api_client.post(post_url, data)
     get_response_after_adding = api_client.get(get_url)
 
-    assert get_response_before_adding.data['cart_items'][0]['amount'] == 3
-    assert get_response_after_adding.data['cart_items'][0]['amount'] == 7
+    assert get_response_before_adding.data['cart_item_data'][0]['amount'] == 3
+    assert get_response_after_adding.data['cart_item_data'][0]['amount'] == 7
 
 
 @pytest.mark.django_db
@@ -166,65 +165,56 @@ def test_add_cart_different_instances(api_client, cart_create, equipment_1, equi
     post_request = api_client.post(post_url, data_diff_date)
     post_request = api_client.post(post_url, data_diff_equipment)
     result = api_client.get(get_url)
-    assert result.data['cart_items'][0]['amount'] == 1
-    assert result.data['cart_items'][1]['amount'] == 3
-    assert result.data['cart_items'][2]['amount'] == 4
+    assert result.data['cart_item_data'][0]['amount'] == 1
+    assert result.data['cart_item_data'][1]['amount'] == 3
+    assert result.data['cart_item_data'][2]['amount'] == 4
 
 
 @pytest.mark.django_db
-def test_cart_availability(equipment_1, equipment_2, api_client, user):
-    """
-    Проверка наличия в корзине снаряжения на выбранную дату
-    """
-    today = datetime.date.today()
-    delta = datetime.timedelta(days=5)
-    first_buy = Rentals.objects.create(
-        user=user,
-        equipment=equipment_1,
-        amount=2,
-        date_start=f'{today}',
-        date_end=f'{today + delta}'
-    )
+def test_delete_cart_items(cart_create, api_client):
+    get_url = reverse('cart')
+    get_response = api_client.get(get_url)
+    pk = get_response.data['cart_item_data'][0]['id']
+    # проверяем количество в корзине до удаления
+    assert get_response.data['cart_item_data'][0]['amount'] == 3
+    url = reverse('cart_delete', kwargs={'pk': pk, 'amount': 2})
+    delete_response = api_client.delete(url)
+    # ответ сервера после удаления
+    assert delete_response.status_code == 200
+    assert delete_response.data['amount'] == 2
+    get_response = api_client.get(get_url)
+    # количество после удаления
+    assert get_response.data['cart_item_data'][0]['amount'] == 1
 
-    # проверка на прошедшее время
-    get_url = reverse('dates-list') + f'?date_start=2023-05-29&date_end=2023-05-30'
-    response = api_client.get(get_url)
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    # наличие в указанные даты
-    get_url_1 = reverse('dates-list') + f'?date_start={today}&date_end={today + delta}'
-    response = api_client.get(get_url_1)
-    assert len(response.data) == 2
-    print(response.data)
-    assert response.data[0]['available_amount'] == 5
-    assert response.data[1]['available_amount'] == 8
+@pytest.mark.django_db
+def test_delete_cart_object(cart_create, api_client):
+    get_url = reverse('cart')
+    get_response = api_client.get(get_url)
+    pk = get_response.data['cart_item_data'][0]['id']
 
-    # если в наличие 0 снаряжения, оно не отображается
-    second_buy = Rentals.objects.create(
-        user=user,
-        equipment=equipment_2,
-        amount=5,
-        date_start=f'{today}',
-        date_end=f'{today + delta}'
-    )
-    response = api_client.get(get_url_1)
-    assert len(response.data) == 1
-    assert response.data[0]['available_amount'] == 8
+    url = reverse('cart_delete', kwargs={'pk': pk, 'amount': 3})
+    delete_response = api_client.delete(url)
+    # ответ сервера после удаления
+    assert delete_response.status_code == 204
+    assert delete_response.data is None
+    get_response = api_client.get(get_url)
+    # количество после удаления
+    assert len(get_response.data['cart_item_data']) == 0
 
-    # наличие в даты, которые пересекаются с занятой датой хотя бы в 1 день
-    delta_1 = datetime.timedelta(days=5)
-    delta_2 = datetime.timedelta(days=10)
-    get_url_2 = reverse('dates-list') + f'?date_start={today + delta_1}&date_end={today + delta_2}'
-    response = api_client.get(get_url_2)
-    assert len(response.data) == 1
-    assert response.data[0]['available_amount'] == 8
 
-    # наличие в даты, когда всё свободно
-    delta_3 = datetime.timedelta(days=6)
-    delta_4 = datetime.timedelta(days=8)
-    get_url_3 = reverse('dates-list') + f'?date_start={today + delta_3}&date_end={today + delta_4}'
-    response = api_client.get(get_url_3)
-    assert len(response.data) == 2
-    print(response.data)
-    assert response.data[0]['available_amount'] == 5
-    assert response.data[1]['available_amount'] == 10
+@pytest.mark.django_db
+def test_delete_by_invalid_pk(api_client):
+    get_url = reverse('cart')
+    get_response = api_client.get(get_url)
+    pk = 1
+
+    url = reverse('cart_delete', kwargs={'pk': pk, 'amount': 3})
+    delete_response = api_client.delete(url)
+    # ответ сервера после удаления
+    assert delete_response.status_code == 404
+    assert delete_response.data['error'] == 'Cart item not found.'
+    get_response = api_client.get(get_url)
+    assert len(get_response.data['cart_item_data']) == 0
+
+

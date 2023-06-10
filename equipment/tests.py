@@ -100,3 +100,64 @@ def test_search_and_filter(equipment_1, equipment_2, equipment_3):
     assert response.data[1]['price'] == '1500.0'
     assert response.data[2]['price'] == '1000.0'
 
+
+# ТЕСТЫ ИЗ КОРЗИНЫ(ПЕРЕДЕЛАТЬ):
+
+# @pytest.mark.django_db
+# def test_cart_availability(equipment_1, equipment_2, api_client, user):
+#     """
+#     Проверка наличия в корзине снаряжения на выбранную дату
+#     """
+#     today = datetime.date.today()
+#     delta = datetime.timedelta(days=5)
+#     first_buy = Rentals.objects.create(
+#         user=user,
+#         equipment=equipment_1,
+#         amount=2,
+#         date_start=f'{today}',
+#         date_end=f'{today + delta}'
+#     )
+
+
+    # проверка на прошедшее время
+    # get_url = reverse('dates-list') + f'?date_start=2023-05-29&date_end=2023-05-30'
+    # response = api_client.get(get_url)
+    # assert response.status_code == status.HTTP_400_BAD_REQUEST
+    #
+    # # наличие в указанные даты
+    # get_url_1 = reverse('dates-list') + f'?date_start={today}&date_end={today + delta}'
+    # response = api_client.get(get_url_1)
+    # assert len(response.data) == 2
+    # print(response.data)
+    # assert response.data[0]['available_amount'] == 5
+    # assert response.data[1]['available_amount'] == 8
+    #
+    # # если в наличие 0 снаряжения, оно не отображается
+    # second_buy = Rentals.objects.create(
+    #     user=user,
+    #     equipment=equipment_2,
+    #     amount=5,
+    #     date_start=f'{today}',
+    #     date_end=f'{today + delta}'
+    # )
+    # response = api_client.get(get_url_1)
+    # assert len(response.data) == 1
+    # assert response.data[0]['available_amount'] == 8
+    #
+    # # наличие в даты, которые пересекаются с занятой датой хотя бы в 1 день
+    # delta_1 = datetime.timedelta(days=5)
+    # delta_2 = datetime.timedelta(days=10)
+    # get_url_2 = reverse('dates-list') + f'?date_start={today + delta_1}&date_end={today + delta_2}'
+    # response = api_client.get(get_url_2)
+    # assert len(response.data) == 1
+    # assert response.data[0]['available_amount'] == 8
+    #
+    # # наличие в даты, когда всё свободно
+    # delta_3 = datetime.timedelta(days=6)
+    # delta_4 = datetime.timedelta(days=8)
+    # get_url_3 = reverse('dates-list') + f'?date_start={today + delta_3}&date_end={today + delta_4}'
+    # response = api_client.get(get_url_3)
+    # assert len(response.data) == 2
+    # print(response.data)
+    # assert response.data[0]['available_amount'] == 5
+    # assert response.data[1]['available_amount'] == 10

@@ -4,22 +4,19 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 from django.shortcuts import redirect
-from services.check_cart_equipment import availability_check
-from services.payment import get_confirmation_url
-from services.payment_status import get_payment_status
-from services.yookassa_webhook import validate_and_create_payment
+from services.payment.check_cart_before_payment import availability_check
+from services.payment.payment import get_confirmation_url
+from services.payment.payment_status import get_payment_status
+from services.payment.yookassa_webhook import validate_and_create_payment
 from .serializers import PaymentSerializer, PaymentStatusSerializer
 
 
 class CartCheckViewSet(viewsets.ModelViewSet):
     """
     Проверка корзины перед покупкой.
-    Если пользователь добавил снаряжение, а зашел оплатить
-    какое-то время спустя, то нужного количества на
-    указанную дату может не быть.
-    Проверка: берем список cart_items из CartViewSet().list(request),
-    перебираем его и сопоставляем с количеством сняряжения,
-    которое свободно(всего имеется за вычетом оплаченного).
+    Сначала проверка на пустую корзину, затем на превышение количества.
+    Проверка: сравнивается количество снаряжения всего минус количество
+     сняряжения в аренде с количеством в корзине на указанную дату.
     Если в корзине больше, чем свободно, то возвращается сообщение об ошибке,
     если все ок - идет перенаправление на оплату
     """
