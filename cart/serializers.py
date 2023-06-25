@@ -9,14 +9,14 @@ from equipment.models import Equipment
 class CartEquipmentSerializer(serializers.ModelSerializer):
     """Поле equipment сериализатора CartSerializer"""
     price = serializers.DecimalField(max_digits=10, decimal_places=2)
-    amount = serializers.IntegerField()
 
     class Meta:
         model = Equipment
-        fields = ['name', 'category', 'description', 'price', 'amount']
+        fields = ['name', 'price', ]
 
 
 class CartSerializer(serializers.ModelSerializer):
+    equipment = CartEquipmentSerializer()
     summ = serializers.SerializerMethodField()
     dates = serializers.SerializerMethodField()
 
@@ -49,7 +49,6 @@ class AddCartSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError("Start date cannot be in the past.")
             if date_end < date_start:
                 raise serializers.ValidationError("End date cannot be earlier than start date.")
-
         return attrs
 
     class Meta:

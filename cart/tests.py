@@ -103,7 +103,7 @@ def test_add_cart_different_instances(api_client, cart_create, cart_create_2):
 def test_delete_cart_items(cart_create, api_client):
     get_url = reverse('cart')
     get_response = api_client.get(get_url)
-    pk = get_response.data['cart_item_data'][0]['id']
+    pk = get_response.data['cart_item_data'][0]['cart_id']
     # проверяем количество в корзине до удаления
     assert get_response.data['cart_item_data'][0]['amount'] == 3
     url = reverse('cart_delete', kwargs={'pk': pk, 'amount': 2})
@@ -120,7 +120,7 @@ def test_delete_cart_items(cart_create, api_client):
 def test_delete_cart_object(cart_create, api_client):
     get_url = reverse('cart')
     get_response = api_client.get(get_url)
-    pk = get_response.data['cart_item_data'][0]['id']
+    pk = get_response.data['cart_item_data'][0]['cart_id']
 
     url = reverse('cart_delete', kwargs={'pk': pk, 'amount': 3})
     delete_response = api_client.delete(url)
