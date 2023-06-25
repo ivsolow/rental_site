@@ -1,6 +1,7 @@
 from django.urls import path
+
 from .views import CartCheckViewSet, PaymentApiView, YookassaResponseApiView, PaymentStatusApiView
-from django.views.decorators.csrf import csrf_exempt
+
 
 urlpatterns = [
     path('api/v1/cart_check/', CartCheckViewSet.as_view({'get': 'list'}), name='cart_check'),

@@ -50,8 +50,11 @@ def upload_path(instance, filename):
 
 class EquipPhoto(models.Model):
     """Модель для хранения фото снаряжения"""
-    equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE, default=None, null=True)
     photo = models.ImageField(upload_to=upload_path)
+    equipment = models.ForeignKey(Equipment,
+                                  on_delete=models.CASCADE,
+                                  default=None, null=True,
+                                  related_name='photos')
 
     def __str__(self):
         return self.equipment.name

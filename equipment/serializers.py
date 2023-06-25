@@ -1,19 +1,22 @@
 from rest_framework import serializers
-from equipment.models import Equipment
+
+from equipment.models import Equipment, EquipPhoto
 from rentals.models import Rentals
-from services.equipment.available_equipment import get_equipment_photo
+
+
+class EquipPhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EquipPhoto
+        fields = ['photo', ]
 
 
 class EquipmentSerializer(serializers.ModelSerializer):
-    photo = serializers.SerializerMethodField()
+    photos = EquipPhotoSerializer(many=True, read_only=True)
     category = serializers.CharField()
 
     class Meta:
         model = Equipment
         fields = '__all__'
-
-    def get_photo(self, obj):
-        return get_equipment_photo(obj)
 
 
 class EquipmentAvailabilitySerializer(serializers.ModelSerializer):
@@ -28,12 +31,8 @@ class EquipmentAvailabilitySerializer(serializers.ModelSerializer):
 class AvailableEquipmentSerializer(serializers.ModelSerializer):
     available_amount = serializers.IntegerField()
     category = serializers.CharField()
-    photo = serializers.SerializerMethodField()
+    photos = EquipPhotoSerializer(many=True, read_only=True)
 
     class Meta:
         model = Equipment
         exclude = ['amount', ]
-
-    def get_photo(self, obj):
-        return get_equipment_photo(obj)
-

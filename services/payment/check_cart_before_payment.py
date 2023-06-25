@@ -1,5 +1,6 @@
-from cart.models import Cart
 from django.db.models import Sum
+
+from cart.models import Cart
 from equipment.models import Equipment
 from rentals.models import Rentals
 

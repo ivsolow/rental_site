@@ -1,12 +1,14 @@
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+
 from cart.models import Cart
 from cart.serializers import AddCartSerializer, CartSerializer
+from cart.tasks import task_cart_add, task_cart_create
+
 from services.cart.cart_delete import get_cart_object, reduce_equipment_amount, cart_object_remove
 from services.cart.cart_items_list import get_cart_queryset, get_cart_item_data
-from services.cart.cart_update_or_create import create_cart_object, is_cart_exists,\
-                                                cart_update, get_cart_fields
+from services.cart.existing_cart_check import is_cart_exists
 
 
 class CartViewSet(viewsets.ViewSet):
@@ -40,24 +42,31 @@ class CartViewSet(viewsets.ViewSet):
     def create(self, request):
         serializer = AddCartSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
-        cart_fields = get_cart_fields(serializer)
+        cart_fields = serializer.validated_data
         cart = is_cart_exists(cart_fields)
+        error_message = 'Cart data is not added'
 
         if cart:
             amount = cart_fields['amount']
-            cart_update(cart, amount)
-            message = {
-                "name": f"{cart_fields['equipment']}",
-                "amount": f"{amount}"
-            }
+            result = task_cart_add.delay(cart, amount)
+            task_data = result.get()
+            if result.ready():
+                message = {
+                    "name": f"{cart_fields['equipment']}",
+                    "amount": f"{amount}"
+                }
 
-            return Response(message, status.HTTP_200_OK)
+                return Response(message, status.HTTP_201_CREATED)
+            return Response(error_message, status.HTTP_400_BAD_REQUEST)
 
         else:
-            cart = create_cart_object(cart_fields)
-            serializer = AddCartSerializer(cart)
-
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            cart_fields['user'] = cart_fields['user'].id
+            cart_fields['equipment'] = cart_fields['equipment'].id
+            task_result = task_cart_create.delay(cart_fields)
+            task_data = task_result.get()
+            if task_result.ready():
+                return Response(task_data, status=status.HTTP_201_CREATED)
+            return Response(error_message, status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, pk=None, amount=None):
         user = request.user

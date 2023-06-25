@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from equipment.models import EquipPhoto, Equipment, Category
 
 

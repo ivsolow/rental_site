@@ -3,8 +3,9 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.models import Group
-from users.models import CustomUser
 from django.utils.translation import gettext_lazy as _
+
+from users.models import CustomUser
 
 
 class UserCreationForm(forms.ModelForm):

@@ -1,11 +1,13 @@
 import json
-from cart.models import Cart
-from cart.tests import cart_create, cart_create_2, user, api_client, user
-from equipment.tests import equipment_1, equipment_2
+
 import requests
 import pytest
+
 from django.urls import reverse
-from yookassa import Payment
+
+from cart.models import Cart
+from cart.tests import cart_create, cart_create_2
+from equipment.tests import equipment_1, equipment_2,  user, api_client
 from payment.models import CreatedPayment, UserPaymentDetails
 from rentals.models import Rentals
 
@@ -110,7 +112,7 @@ def test_check_cart_all_correct(api_client, cart_create, cart_create_2):
 
 
 @pytest.mark.django_db
-def test_check_cart_uncorrect_amount(api_client, rental_create, cart_create, cart_create_2):
+def test_check_cart_incorrect_amount(api_client, rental_create, cart_create, cart_create_2):
     url = reverse('cart_check')
     response = api_client.get(url)
     assert response.status_code == 400

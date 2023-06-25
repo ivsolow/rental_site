@@ -18,5 +18,3 @@ class UserPaymentDetails(models.Model):
     income_amount_value = models.DecimalField(max_digits=10, decimal_places=2)
     income_amount_currency = models.CharField(max_length=3)
     description = models.CharField(max_length=255)
-
-

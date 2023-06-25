@@ -33,7 +33,7 @@ def get_cart_queryset(user: int) -> dict:
                 Value(' '),
                 'date_concat',
                 Value(' '),
-                'equipment__equipphoto__photo',
+                'equipment__photos__photo',
                 output_field=CharField()
             )
         )
@@ -41,7 +41,7 @@ def get_cart_queryset(user: int) -> dict:
         .annotate(  # Разделение поля equipment_info на отдельные поля
             equipment_name=F('equipment__name'),  # Обращение к полю name в модели equipment и создание
             date_concat=F('date_concat'),  # на его основе нового поля equipment_name
-            photo=F('equipment__equipphoto__photo'),
+            photo=F('equipment__photos__photo'),
             total_amount=Sum('amount'),
             total_summ=Sum('total_price')
         )
@@ -100,4 +100,3 @@ def get_cart_item_data(queryset):
         total_positions += total_amount
 
     return cart_item_data, total_positions, total_summ
-

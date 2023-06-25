@@ -10,7 +10,13 @@ from services.equipment.available_equipment import dates_is_valid, get_available
 
 class EquipmentViewSet(viewsets.ModelViewSet):
     serializer_class = EquipmentSerializer
-    queryset = Equipment.objects.all().order_by('id')
+    queryset = (
+        Equipment.objects.all()
+        .select_related('category')
+        .prefetch_related('photos')
+        .order_by('id')
+    )
+
     filter_backends = [SearchFilter, OrderingFilter]
     permission_classes = [IsAuthenticatedOrReadOnly, ]
     search_fields = ['name', 'description', 'category__name']

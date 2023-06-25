@@ -7,5 +7,7 @@ __pycache__/
 .idea
 /djangoenv
 /cache
-.pytest_cache
-.env
+test_logic_for_celery_task.py
+test_test.py
+celerybeat-schedule.db
+celery.log

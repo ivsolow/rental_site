@@ -1,9 +1,10 @@
 from django.urls import reverse
+from django.shortcuts import redirect
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
-from django.shortcuts import redirect
+
 from services.payment.check_cart_before_payment import availability_check
 from services.payment.payment import get_confirmation_url
 from services.payment.payment_status import get_payment_status

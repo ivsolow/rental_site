@@ -1,5 +1,6 @@
-from yookassa import Configuration, Payment
 import uuid
+
+from yookassa import Configuration, Payment
 
 from equipment_rental_site import settings
 from payment.models import CreatedPayment
@@ -7,6 +8,7 @@ from users.models import CustomUser
 
 
 def get_confirmation_url(user: CustomUser, payment_summ: int, commission: float) -> str:
+    """Получение ссылки на оплату"""
     Configuration.account_id = settings.YOOKASSA_ACCOUNT_ID
     Configuration.secret_key = settings.YOOKASSA_SECRET_KEY
     user_id = user.id
@@ -47,6 +49,7 @@ def get_confirmation_url(user: CustomUser, payment_summ: int, commission: float)
 def write_data_of_created_payment(user_id: int,
                                   idempotence_key: str,
                                   value_with_commission: float) -> None:
+    """Запись данных о сформированном платеже в новую или существующую таблицу"""
 
     create_payment, created = CreatedPayment.objects.get_or_create(
         user_id=user_id,
@@ -57,4 +60,3 @@ def write_data_of_created_payment(user_id: int,
         create_payment.idempotence_key = idempotence_key
         create_payment.amount = value_with_commission
         create_payment.save()
-
