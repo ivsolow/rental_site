@@ -43,6 +43,7 @@ class CartViewSet(viewsets.ViewSet):
         serializer = AddCartSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         cart_fields = serializer.validated_data
+        print(cart_fields)
         cart = is_cart_exists(cart_fields)
         error_message = 'Cart data is not added'
 

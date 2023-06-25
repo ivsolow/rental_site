@@ -1,3 +1,5 @@
+from datetime import date
+
 from cart.models import Cart
 from cart.serializers import AddCartSerializer
 
