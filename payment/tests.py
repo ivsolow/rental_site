@@ -1,3 +1,4 @@
+import datetime
 import json
 
 import requests
@@ -14,12 +15,14 @@ from rentals.models import Rentals
 
 @pytest.fixture
 def rental_create(api_client, equipment_1, user):
+    today = datetime.date.today()
+    delta = datetime.timedelta(days=5)
     rental = Rentals.objects.create(
         equipment=equipment_1,
         user=user,
         amount=10,
-        date_start='2023-05-20',
-        date_end='2023-05-22'
+        date_start=f'{today}',
+        date_end=f'{today + delta}'
     )
     return
 
@@ -27,7 +30,7 @@ def rental_create(api_client, equipment_1, user):
 def yookassa_response_create(api_client):
     url = reverse('payment')
     data = {
-        "total_summ": "500",
+        "payment_sum": "500",
         "commission": "3.5"
     }
     response = api_client.post(url, data)
@@ -100,11 +103,12 @@ def test_check_empty_cart(api_client):
     url = reverse('cart_check')
     response = api_client.get(url)
     assert response.status_code == 400
-    assert response.data == 'Корзина пуста'
+    assert response.data['detail'] == 'Корзина пуста'
 
 
 @pytest.mark.django_db
 def test_check_cart_all_correct(api_client, cart_create, cart_create_2):
+
     url = reverse('cart_check')
     response = api_client.get(url)
     assert response.status_code == 302
@@ -115,8 +119,9 @@ def test_check_cart_all_correct(api_client, cart_create, cart_create_2):
 def test_check_cart_incorrect_amount(api_client, rental_create, cart_create, cart_create_2):
     url = reverse('cart_check')
     response = api_client.get(url)
+    print(response.data)
     assert response.status_code == 400
-    assert response.data['exceeding_amount'] == 3
+    assert response.data['params']['exceeding_amount'] == 3
 
 
 @pytest.mark.django_db
@@ -124,7 +129,7 @@ def test_payment_api_view(api_client):
     # Подготовка данных для запроса
     url = reverse('payment')
     data = {
-        "total_summ": "500",
+        "payment_sum": "500",
         "commission": "3.5"
     }
     response = api_client.post(url, data)

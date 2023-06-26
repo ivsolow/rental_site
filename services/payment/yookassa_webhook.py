@@ -3,6 +3,7 @@ from django.utils import timezone
 from cart.models import Cart
 from payment.models import CreatedPayment, UserPaymentDetails
 from rentals.models import Rentals
+from services.payment.exceptions import InvalidKeyPaymentException
 from users.models import CustomUser
 
 
@@ -12,15 +13,19 @@ def validate_and_create_payment(webhook_data: dict) -> bool:
     payment_data = webhook_data['object']
     idempotence_key = payment_data['metadata']['idempotence_key']
     created_payment = CreatedPayment.objects.filter(idempotence_key=idempotence_key)
+
     if not created_payment.exists():
-        return False
+        raise InvalidKeyPaymentException()
     payment_status = webhook_data['event']
+
     if payment_status == 'payment.succeeded':
         user_id = int(payment_data['metadata']['user_id'])
         start_new_rental(user_id)
         create_new_rental_info(payment_data, idempotence_key)
+
     # обновление статуса оплаты
     update_payment_data = created_payment.update(payment_status=payment_status)
+
     return True
 
 

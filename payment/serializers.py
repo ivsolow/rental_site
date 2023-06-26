@@ -5,12 +5,12 @@ from payment.models import CreatedPayment
 
 
 class PaymentSerializer(serializers.ModelSerializer):
-    total_summ = serializers.IntegerField()
+    payment_sum = serializers.IntegerField()
     commission = serializers.DecimalField(decimal_places=1, max_digits=4)
 
     class Meta:
         model = Cart
-        fields = ['total_summ', 'commission', ]
+        fields = ['payment_sum', 'commission', ]
 
 
 class PaymentStatusSerializer(serializers.ModelSerializer):

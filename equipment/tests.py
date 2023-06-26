@@ -48,6 +48,7 @@ def equipment_3():
     )
     return equipment
 
+
 @pytest.fixture
 def user():
     # Создание пользователя

@@ -1,4 +1,5 @@
 from payment.models import CreatedPayment
+from services.payment.exceptions import InvalidKeyPaymentException
 
 
 def get_payment_status(idempotence_key: str) -> dict:
@@ -12,7 +13,8 @@ def get_payment_status(idempotence_key: str) -> dict:
             "amount": str(amount),
             "status": payment_status
         }
+
         if payment_status == 'payment.succeeded':
             CreatedPayment.objects.filter(idempotence_key=idempotence_key).delete()
         return response_message
-    return {}
+    raise InvalidKeyPaymentException()

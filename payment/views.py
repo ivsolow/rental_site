@@ -1,15 +1,18 @@
 from django.urls import reverse
 from django.shortcuts import redirect
+
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 
+from .serializers import PaymentSerializer, PaymentStatusSerializer
 from services.payment.check_cart_before_payment import availability_check
 from services.payment.payment import get_confirmation_url
 from services.payment.payment_status import get_payment_status
 from services.payment.yookassa_webhook import validate_and_create_payment
-from .serializers import PaymentSerializer, PaymentStatusSerializer
+from services.payment.exceptions import UnavailableCartItemsException, ExpiredCartDateException, \
+                                                                       InvalidKeyPaymentException
 
 
 class CartCheckViewSet(viewsets.ModelViewSet):
@@ -24,11 +27,15 @@ class CartCheckViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, ]
 
     def list(self, request, *args, **kwargs):
-        result = availability_check(request)
-        if not result:
-            return Response('Корзина пуста', status=status.HTTP_400_BAD_REQUEST)
-        elif isinstance(result, dict):
-            return Response(result, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            availability_check(request)
+        except (ExpiredCartDateException, UnavailableCartItemsException) as e:
+            error_details = {
+                'message': e.message,
+                'params': e.params
+            }
+            return Response(error_details, status=e.status_code)
+
         return redirect(reverse('payment'))
 
 
@@ -39,26 +46,28 @@ class PaymentApiView(APIView):
 
     def post(self, request, *args, **kwargs):
         serializer = PaymentSerializer(data=request.POST)
-        if serializer.is_valid():
-            serialized_data = serializer.validated_data
-        else:
-            answer = 'Serialized data is not valid!'
-            return Response(answer, status=status.HTTP_400_BAD_REQUEST)
-        payment_summ = serialized_data.get('total_summ')
-        commission = serialized_data.get('commission')
-        user = request.user
-        confirmation_url = get_confirmation_url(user, payment_summ, commission)
 
-        return Response(confirmation_url, status=status.HTTP_200_OK)
+        if serializer.is_valid():
+            payment_sum = serializer.validated_data.get('payment_sum')
+            commission = serializer.validated_data.get('commission')
+            user = request.user
+            confirmation_url = get_confirmation_url(user, payment_sum, commission)
+            return Response(confirmation_url, status=status.HTTP_200_OK)
+
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class YookassaResponseApiView(APIView):
     """Получение и обработка вебхука от Юкассы"""
-
     def post(self, response):
         webhook_data = response.data
-        if not validate_and_create_payment(webhook_data):
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            validate_and_create_payment(webhook_data)
+        except InvalidKeyPaymentException as e:
+            return Response(e.message, status=e.status_code)
+
         return Response(status=status.HTTP_200_OK)
 
 
@@ -69,7 +78,10 @@ class PaymentStatusApiView(APIView):
 
     def post(self, request):
         idempotence_key = request.data['idempotence_key']
-        payment_status = get_payment_status(idempotence_key)
-        if payment_status:
-            return Response(payment_status, status=status.HTTP_200_OK)
-        return Response({"error": "Invalid idempotence_key"}, status=status.HTTP_204_NO_CONTENT)
+
+        try:
+            payment_status = get_payment_status(idempotence_key)
+        except InvalidKeyPaymentException as e:
+            return Response(e.message, status=e.status_code)
+
+        return Response(payment_status, status=status.HTTP_200_OK)

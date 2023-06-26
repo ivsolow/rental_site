@@ -7,12 +7,12 @@ from payment.models import CreatedPayment
 from users.models import CustomUser
 
 
-def get_confirmation_url(user: CustomUser, payment_summ: int, commission: float) -> str:
+def get_confirmation_url(user: CustomUser, payment_sum: int, commission: float) -> str:
     """Получение ссылки на оплату"""
     Configuration.account_id = settings.YOOKASSA_ACCOUNT_ID
     Configuration.secret_key = settings.YOOKASSA_SECRET_KEY
     user_id = user.id
-    value_with_commission = payment_summ * 1 / (1 - (commission / 100))
+    value_with_commission = payment_sum * 1 / (1 - (commission / 100))
     idempotence_key = str(uuid.uuid4())
 
     return_url = 'https://example.com/'
@@ -41,7 +41,6 @@ def get_confirmation_url(user: CustomUser, payment_summ: int, commission: float)
 
     confirmation_url = payment.confirmation.confirmation_url
     write_data_of_created_payment(user_id, idempotence_key, value_with_commission)
-    print(confirmation_url)
 
     return confirmation_url
 
@@ -55,7 +54,8 @@ def write_data_of_created_payment(user_id: int,
         user_id=user_id,
         idempotence_key=idempotence_key,
         amount=value_with_commission
-    )
+        )
+
     if not created:
         create_payment.idempotence_key = idempotence_key
         create_payment.amount = value_with_commission

@@ -1,3 +1,5 @@
+import datetime
+
 from cart.models import Cart
 import pytest
 from django.urls import reverse
@@ -7,24 +9,29 @@ from equipment.tests import user, api_client, equipment_1, equipment_2
 
 @pytest.fixture
 def cart_create(user, equipment_1):
+    today = datetime.date.today()
+    delta = datetime.timedelta(days=5)
     cart = Cart.objects.create(
         user=user,
         amount=3,
         equipment=equipment_1,
-        date_start='2023-05-20',
-        date_end='2023-05-22'
+        date_start=f'{today}',
+        date_end=f'{today + delta}'
     )
     return cart
 
 
 @pytest.fixture
 def cart_create_2(user, equipment_2):
+    today = datetime.date.today()
+    delta1 = datetime.timedelta(days=2)
+    delta2 = datetime.timedelta(days=8)
     cart = Cart.objects.create(
         user=user,
         amount=1,
         equipment=equipment_2,
-        date_start="2023-05-25",
-        date_end="2023-05-28"
+        date_start=f'{today + delta1}',
+        date_end=f'{today + delta2}'
     )
     return cart
 
