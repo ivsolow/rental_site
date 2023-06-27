@@ -1,0 +1,103 @@
+from django.utils import timezone
+from django.core.mail import send_mail
+
+from cart.models import Cart
+from payment.models import CreatedPayment, UserPaymentDetails
+from payment.tasks import task_send_payment_email
+from rentals.models import Rentals
+from services.payment.exceptions import InvalidKeyPaymentException
+from users.models import CustomUser
+
+
+def validate_and_create_payment(webhook_data: dict) -> bool:
+    """Валидация ответа от Юкассы по ключу idempotence_key,
+    а также создание новой аренды в случае успеха"""
+    payment_data = webhook_data['object']
+    idempotence_key = payment_data['metadata']['idempotence_key']
+    created_payment = CreatedPayment.objects.filter(idempotence_key=idempotence_key)
+
+    if not created_payment.exists():
+        raise InvalidKeyPaymentException()
+
+    payment_status = webhook_data['event']
+    if payment_status == 'payment.succeeded':
+        user_id = int(payment_data['metadata']['user_id'])
+        new_rental_detail = start_new_rental(user_id)
+        total_paid_sum = create_new_rental_info(payment_data, idempotence_key)
+        task_send_payment_email.delay(new_rental_detail, total_paid_sum, user_id)
+
+    # обновление статуса оплаты
+    update_payment_data = created_payment.update(payment_status=payment_status)
+
+    return True
+
+
+def start_new_rental(user_id: int) -> list:
+    """
+    В случае успешной оплаты у пользователя создаются
+    объекты аренды, а корзина очищается
+    """
+    cart_equipment = Cart.objects.filter(user_id=user_id)
+
+    equipment_list = []
+    for cart_item in cart_equipment:
+        rental = Rentals.objects.create(
+            equipment=cart_item.equipment,
+            user_id=user_id,
+            amount=cart_item.amount,
+            date_start=cart_item.date_start,
+            date_end=cart_item.date_end
+        )
+
+        item_summ = float(cart_item.equipment.price * cart_item.amount)
+
+        equipment_data = {
+            'equipment': cart_item.equipment.name,
+            'amount': cart_item.amount,
+            'date_start': str(cart_item.date_start),
+            'date_end': str(cart_item.date_end),
+            'item_summ': item_summ
+        }
+
+        equipment_list.append(equipment_data)
+
+    cart_equipment.delete()
+    return equipment_list
+
+
+def create_new_rental_info(payment_data: dict, idempotence_key: str) -> int:
+    """Запись информации об успешном платеже"""
+    paid_amount = payment_data['amount']['value']
+    payment = UserPaymentDetails.objects.create(
+        payment_id=payment_data['id'],
+        idempotence_key=idempotence_key,
+        date_payment=timezone.now(),
+        amount_value=paid_amount,
+        amount_currency=payment_data['amount']['currency'],
+        income_amount_value=payment_data['income_amount']['value'],
+        income_amount_currency=payment_data['income_amount']['currency'],
+        description=payment_data['description'])
+    return paid_amount
+
+
+def send_email_success_payment(new_rental_detail: list, total_paid_sum: int, user_id: int) -> None:
+    message = 'Оплата прошла успешно. Спасибо, что воспользовались нашим прокатом.\n\n' \
+              f"Детали заказа: \n {get_payment_details_string(new_rental_detail)}\n\n" \
+              f"Итоговая сумма: {total_paid_sum} рублей"
+
+    user_email = CustomUser.objects.get(id=user_id).email
+    subject = 'Payment Confirmation'
+    from_email = 'rental_service-noreply@gmail.com'
+    recipient_list = [user_email]
+    send_mail(subject, message, from_email, recipient_list)
+
+
+def get_payment_details_string(new_rental_detail: list) -> str:
+    details_string = ''
+    for rental_item in new_rental_detail:
+        details_string += f"Снаряжение: {rental_item['equipment']}\n" \
+                          f"Количество: {rental_item['amount']}\n" \
+                          f"Даты проката: {rental_item['date_start']} - {rental_item['date_end']}\n" \
+                          f"Сумма: {rental_item['item_summ']} рублей\n" \
+                          f"{'_'*40}\n"
+    return details_string

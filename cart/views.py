@@ -9,6 +9,7 @@ from cart.tasks import task_cart_add, task_cart_create
 from services.cart.cart_delete import get_cart_object, reduce_equipment_amount, cart_object_remove
 from services.cart.cart_items_list import get_cart_queryset, get_cart_item_data
 from services.cart.existing_cart_check import is_cart_exists
+from services.payment.received_payment_operations import send_email_success_payment, start_new_rental
 
 
 class CartViewSet(viewsets.ViewSet):
@@ -37,6 +38,12 @@ class CartViewSet(viewsets.ViewSet):
             'total_summ': float(total_summ),
         }
 
+        # user_id = user.id
+        # start_new_rental(user_id)
+        # print(user_id)
+        # total_paid_sum = 10000.0
+        # new_rental_detail = start_new_rental(user_id)
+        # send_email_success_payment(new_rental_detail, total_paid_sum, user_id)
         return Response(response_data)
 
     def create(self, request):
@@ -83,6 +90,6 @@ class CartViewSet(viewsets.ViewSet):
                 return Response(message, status=status.HTTP_200_OK)
             else:
                 cart_object_remove(cart_object)
-                return Response(status=status.HTTP_204_NO_CONTENT)
+                return Response("Cart object deleted successfully", status=status.HTTP_200_OK)
         except Cart.DoesNotExist:
             return Response({'error': 'Cart item not found.'}, status=status.HTTP_404_NOT_FOUND)

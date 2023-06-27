@@ -41,14 +41,15 @@ class AddCartSerializer(serializers.ModelSerializer):
         attrs = super().validate(attrs)
 
         # Ваша логика проверки для полей date_start и date_end
-
         date_start = attrs.get('date_start')
         date_end = attrs.get('date_end')
+        # if not date_start or not date_end:
+        #     raise serializers.ValidationError("Fields date_start or date_end cannot be empty.")
         if date_start and date_end:
             if date_start < date.today():
                 raise serializers.ValidationError("Start date cannot be in the past.")
-            if date_end < date_start:
-                raise serializers.ValidationError("End date cannot be earlier than start date.")
+            if date_end <= date_start:
+                raise serializers.ValidationError("End date cannot be earlier than start date or the same.")
         return attrs
 
     class Meta:
