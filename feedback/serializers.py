@@ -36,6 +36,7 @@ class AddFeedbackSerializer(serializers.ModelSerializer):
         fields = ['content', 'equipment', 'rate', 'feedback_photo']
 
     def create(self, validated_data):
+        print(type(validated_data))
         equipment = Equipment.objects.filter(id=validated_data['equipment']).first()
         if not equipment:
             raise serializers.ValidationError("No such equipment")

@@ -1,16 +1,9 @@
 from django.db import models
-from django.utils import timezone
-from django.db.models.signals import pre_delete
-from django.dispatch import receiver
+
 
 from equipment.models import Equipment
-from rentals.models import Rentals
+from services.equipment.upload_photos_path import upload_path
 from users.models import CustomUser
-
-
-@receiver(pre_delete, sender=CustomUser)
-def set_user_deleted(sender, instance, **kwargs):
-    Feedback.objects.filter(user=instance).update(user='Deleted')
 
 
 class Feedback(models.Model):
@@ -28,33 +21,12 @@ class Feedback(models.Model):
     rate = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
 
     def __str__(self):
-        return f'{self.user.first_name} about {self.equipment.name}'
-
-
-# def upload_path(instance, filename):
-#     """Определяем путь для папки хранения фотографий отзывов"""
-#     name = instance.equipment
-#     return '{}/{}/{}'.format("Feedback", name, filename)
-
-class Upload:
-    """Переменные, используемые в функции upload_path"""
-    NAME_CACHE = set()
-    PHOTO_ID = 1
-
-
-def upload_path(instance, filename):
-    """Определяем имена файлов и путь для папки хранения фотографий снаряжения"""
-    name = instance.feedback.equipment.name
-    if name in Upload.NAME_CACHE:
-        Upload.PHOTO_ID += 1
-    else:
-        Upload.NAME_CACHE.clear()
-        Upload.NAME_CACHE.add(name)
-        Upload.PHOTO_ID = 1
-    filename = '{}_{}.{}'.format(name, Upload.PHOTO_ID, filename.split('.')[-1].lower())
-    return '{}/{}/{}'.format("Feedback", instance.feedback, filename)
+        return f'{self.user.email} about {self.equipment.name}'
 
 
 class FeedbackPhoto(models.Model):
     feedback = models.ForeignKey(Feedback, on_delete=models.PROTECT, related_name='feedback_photo')
     photo = models.ImageField(upload_to=upload_path)
+
+    def __str__(self):
+        return f"{self.feedback.user.email} about {self.feedback.equipment.name}"

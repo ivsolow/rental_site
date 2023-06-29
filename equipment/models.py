@@ -1,5 +1,7 @@
 from django.db import models
 
+from services.equipment.upload_photos_path import upload_path
+
 
 class Equipment(models.Model):
     """Модель для снаряжения"""
@@ -27,25 +29,6 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class Upload:
-    """Переменные, используемые в функции upload_path"""
-    NAME_CACHE = set()
-    PHOTO_ID = 1
-
-
-def upload_path(instance, filename):
-    """Определяем имена файлов и путь для папки хранения фотографий снаряжения"""
-    name = instance.equipment.name
-    if name in Upload.NAME_CACHE:
-        Upload.PHOTO_ID += 1
-    else:
-        Upload.NAME_CACHE.clear()
-        Upload.NAME_CACHE.add(name)
-        Upload.PHOTO_ID = 1
-    filename = '{}_{}.{}'.format(name, Upload.PHOTO_ID, filename.split('.')[-1].lower())
-    return '{}/{}/{}'.format('Equipment', instance.equipment.category, filename)
 
 
 class EquipPhoto(models.Model):
