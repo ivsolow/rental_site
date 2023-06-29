@@ -31,19 +31,8 @@ class CartViewSet(viewsets.ViewSet):
     def list(self, request):
         user = request.user
         queryset = get_cart_queryset(user)
-        cart_item_data, total_positions, total_summ = get_cart_item_data(queryset)
-        response_data = {
-            'cart_item_data': cart_item_data,
-            'total_positions': total_positions,
-            'total_summ': float(total_summ),
-        }
+        response_data = get_cart_item_data(queryset)
 
-        # user_id = user.id
-        # start_new_rental(user_id)
-        # print(user_id)
-        # total_paid_sum = 10000.0
-        # new_rental_detail = start_new_rental(user_id)
-        # send_email_success_payment(new_rental_detail, total_paid_sum, user_id)
         return Response(response_data)
 
     def create(self, request):

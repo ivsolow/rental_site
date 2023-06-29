@@ -57,7 +57,7 @@ def get_cart_queryset(user: int) -> dict:
     return queryset
 
 
-def get_cart_item_data(queryset):
+def get_cart_item_data(queryset: dict) -> dict:
     """
     Подсчет общей суммы и количества всех позиций.
     Формирование queryset'a
@@ -91,4 +91,10 @@ def get_cart_item_data(queryset):
 
         total_positions += total_amount
 
-    return cart_item_data, total_positions, total_summ
+    response_data = {
+        'cart_item_data': cart_item_data,
+        'total_positions': total_positions,
+        'total_summ': float(total_summ),
+    }
+
+    return response_data

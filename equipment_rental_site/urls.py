@@ -28,7 +28,8 @@ urlpatterns = [
     path('', include('cart.urls')),
     path('', include('payment.urls')),
     path('', include('rentals.urls')),
-    path('', include('cart.test_logic_for_celery_task')),
+    path('', include('feedback.urls')),
+    # path('', include('cart.test_logic_for_celery_task')),
 ]
 
 

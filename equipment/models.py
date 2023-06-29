@@ -45,7 +45,7 @@ def upload_path(instance, filename):
         Upload.NAME_CACHE.add(name)
         Upload.PHOTO_ID = 1
     filename = '{}_{}.{}'.format(name, Upload.PHOTO_ID, filename.split('.')[-1].lower())
-    return '{}/{}'.format(instance.equipment.category, filename)
+    return '{}/{}/{}'.format('Equipment', instance.equipment.category, filename)
 
 
 class EquipPhoto(models.Model):
