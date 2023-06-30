@@ -132,8 +132,8 @@ def test_delete_cart_object(cart_create, api_client):
     url = reverse('cart_delete', kwargs={'pk': pk, 'amount': 3})
     delete_response = api_client.delete(url)
     # ответ сервера после удаления
-    assert delete_response.status_code == 204
-    assert delete_response.data is None
+    assert delete_response.status_code == 200
+    assert delete_response.data == 'Cart object deleted successfully'
     get_response = api_client.get(get_url)
     # количество после удаления
     assert len(get_response.data['cart_item_data']) == 0

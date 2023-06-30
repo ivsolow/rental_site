@@ -1,14 +1,9 @@
-from datetime import date
-
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from equipment.models import Equipment
-from feedback.models import Feedback
 from feedback.serializers import FeedbackSerializer, AddFeedbackSerializer, FeedbackEquipmentSerializer
-from rentals.models import Rentals
 from services.feedback.get_and_create_qurysets import get_feedback_queryset, get_equipment_for_feedback_queryset
 
 

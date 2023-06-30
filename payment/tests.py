@@ -8,23 +8,11 @@ from django.urls import reverse
 
 from cart.models import Cart
 from cart.tests import cart_create, cart_create_2
-from equipment.tests import equipment_1, equipment_2,  user, api_client
+from equipment.tests import user, api_client, equipment_1, equipment_2
 from payment.models import CreatedPayment, UserPaymentDetails
 from rentals.models import Rentals
+from rentals.tests import rental_create
 
-
-@pytest.fixture
-def rental_create(api_client, equipment_1, user):
-    today = datetime.date.today()
-    delta = datetime.timedelta(days=5)
-    rental = Rentals.objects.create(
-        equipment=equipment_1,
-        user=user,
-        amount=10,
-        date_start=f'{today}',
-        date_end=f'{today + delta}'
-    )
-    return
 
 @pytest.fixture
 def yookassa_response_create(api_client):

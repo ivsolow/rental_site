@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'djoser',
     'debug_toolbar',
+    'django_extensions',
 
     'equipment',
     'cart',
@@ -96,7 +97,6 @@ DATABASES = {
         'PORT': '5432',
         'ATOMIC_REQUESTS': True
     },
-
 }
 
 

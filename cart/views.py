@@ -9,7 +9,6 @@ from cart.tasks import task_cart_add, task_cart_create
 from services.cart.cart_delete import get_cart_object, reduce_equipment_amount, cart_object_remove
 from services.cart.cart_items_list import get_cart_queryset, get_cart_item_data
 from services.cart.existing_cart_check import is_cart_exists
-from services.payment.received_payment_operations import send_email_success_payment, start_new_rental
 
 
 class CartViewSet(viewsets.ViewSet):
@@ -74,8 +73,7 @@ class CartViewSet(viewsets.ViewSet):
                 message = {
                     "deleted": f"{cart_object.equipment.name}",
                     "amount": int(f"{amount}"),
-
-                }
+                    }
                 return Response(message, status=status.HTTP_200_OK)
             else:
                 cart_object_remove(cart_object)

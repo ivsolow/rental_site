@@ -16,7 +16,7 @@ def get_cart_queryset(user: int) -> dict:
     """
     queryset = (
         Cart.objects
-        .filter(user=user)  # Фильтрация по пользователю
+        .filter(user=user)
         .annotate(
             cart_id=F('id'),
             total_price=F('amount') * F('equipment__price'),

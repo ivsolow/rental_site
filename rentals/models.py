@@ -1,7 +1,8 @@
 from django.db import models
+from django.utils import timezone
+
 from equipment.models import Equipment
 from users.models import CustomUser
-from django.utils import timezone
 
 
 class Rentals(models.Model):
@@ -14,5 +15,5 @@ class Rentals(models.Model):
     is_closed = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.equipment.name + f'{self.date_start} - {self.date_end}'
+        return f'{self.equipment.name}: {self.date_start} - {self.date_end}'
 
