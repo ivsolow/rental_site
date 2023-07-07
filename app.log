@@ -1,0 +1,86 @@
+Attaching to equipment_rental_site_web-app_1, equipment_rental_site_database_1
+[36mdatabase_1  |[0m The files belonging to this database system will be owned by user "postgres".
+[36mdatabase_1  |[0m This user must also own the server process.
+[36mdatabase_1  |[0m 
+[36mdatabase_1  |[0m The database cluster will be initialized with locale "en_US.utf8".
+[36mdatabase_1  |[0m The default database encoding has accordingly been set to "UTF8".
+[36mdatabase_1  |[0m The default text search configuration will be set to "english".
+[36mdatabase_1  |[0m 
+[36mdatabase_1  |[0m Data page checksums are disabled.
+[36mdatabase_1  |[0m 
+[36mdatabase_1  |[0m fixing permissions on existing directory /var/lib/postgresql/data ... ok
+[36mdatabase_1  |[0m creating subdirectories ... ok
+[36mdatabase_1  |[0m selecting dynamic shared memory implementation ... posix
+[36mdatabase_1  |[0m selecting default max_connections ... 100
+[36mdatabase_1  |[0m selecting default shared_buffers ... 128MB
+[36mdatabase_1  |[0m selecting default time zone ... UTC
+[36mdatabase_1  |[0m creating configuration files ... ok
+[36mdatabase_1  |[0m running bootstrap script ... ok
+[36mdatabase_1  |[0m sh: locale: not found
+[36mdatabase_1  |[0m 2023-07-01 21:19:49.344 UTC [30] WARNING:  no usable system locales were found
+[36mdatabase_1  |[0m performing post-bootstrap initialization ... ok
+[36mdatabase_1  |[0m initdb: warning: enabling "trust" authentication for local connections
+[36mdatabase_1  |[0m initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+[36mdatabase_1  |[0m syncing data to disk ... ok
+[36mdatabase_1  |[0m 
+[36mdatabase_1  |[0m 
+[36mdatabase_1  |[0m Success. You can now start the database server using:
+[36mdatabase_1  |[0m 
+[36mdatabase_1  |[0m     pg_ctl -D /var/lib/postgresql/data -l logfile start
+[36mdatabase_1  |[0m 
+[36mdatabase_1  |[0m waiting for server to start....2023-07-01 21:19:58.845 UTC [36] LOG:  starting PostgreSQL 15.1 on x86_64-pc-linux-musl, compiled by gcc (Alpine 11.2.1_git20220219) 11.2.1 20220219, 64-bit
+[36mdatabase_1  |[0m 2023-07-01 21:19:59.023 UTC [36] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+[36mdatabase_1  |[0m 2023-07-01 21:19:59.109 UTC [39] LOG:  database system was shut down at 2023-07-01 21:19:50 UTC
+[36mdatabase_1  |[0m 2023-07-01 21:19:59.121 UTC [36] LOG:  database system is ready to accept connections
+[36mdatabase_1  |[0m  done
+[36mdatabase_1  |[0m server started
+[36mdatabase_1  |[0m CREATE DATABASE
+[36mdatabase_1  |[0m 
+[36mdatabase_1  |[0m 
+[36mdatabase_1  |[0m /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+[36mdatabase_1  |[0m 
+[36mdatabase_1  |[0m waiting for server to shut down...2023-07-01 21:20:01.180 UTC [36] LOG:  received fast shutdown request
+[36mdatabase_1  |[0m ....2023-07-01 21:20:04.562 UTC [36] LOG:  aborting any active transactions
+[36mdatabase_1  |[0m 2023-07-01 21:20:04.564 UTC [36] LOG:  background worker "logical replication launcher" (PID 42) exited with exit code 1
+[36mdatabase_1  |[0m 2023-07-01 21:20:04.566 UTC [37] LOG:  shutting down
+[36mdatabase_1  |[0m 2023-07-01 21:20:04.572 UTC [37] LOG:  checkpoint starting: shutdown immediate
+[36mdatabase_1  |[0m .....2023-07-01 21:20:09.874 UTC [37] LOG:  checkpoint complete: wrote 918 buffers (5.6%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.102 s, sync=5.093 s, total=5.309 s; sync files=250, longest=2.537 s, average=0.021 s; distance=4221 kB, estimate=4221 kB
+[36mdatabase_1  |[0m 2023-07-01 21:20:09.884 UTC [36] LOG:  database system is shut down
+[36mdatabase_1  |[0m  done
+[36mdatabase_1  |[0m server stopped
+[36mdatabase_1  |[0m 
+[36mdatabase_1  |[0m PostgreSQL init process complete; ready for start up.
+[36mdatabase_1  |[0m 
+[36mdatabase_1  |[0m 2023-07-01 21:20:09.981 UTC [1] LOG:  starting PostgreSQL 15.1 on x86_64-pc-linux-musl, compiled by gcc (Alpine 11.2.1_git20220219) 11.2.1 20220219, 64-bit
+[36mdatabase_1  |[0m 2023-07-01 21:20:09.981 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+[36mdatabase_1  |[0m 2023-07-01 21:20:09.981 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+[36mdatabase_1  |[0m 2023-07-01 21:20:10.043 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+[36mdatabase_1  |[0m 2023-07-01 21:20:10.061 UTC [51] LOG:  database system was shut down at 2023-07-01 21:20:09 UTC
+[36mdatabase_1  |[0m 2023-07-01 21:20:10.073 UTC [1] LOG:  database system is ready to accept connections
+[36mdatabase_1  |[0m 2023-07-01 21:25:10.158 UTC [49] LOG:  checkpoint starting: time
+[36mdatabase_1  |[0m 2023-07-01 21:25:12.472 UTC [49] LOG:  checkpoint complete: wrote 25 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=2.218 s, sync=0.054 s, total=2.314 s; sync files=11, longest=0.013 s, average=0.005 s; distance=65 kB, estimate=65 kB
+[36mdatabase_1  |[0m 2023-07-01 21:57:52.167 UTC [1] LOG:  received fast shutdown request
+[36mdatabase_1  |[0m 2023-07-01 21:57:52.175 UTC [1] LOG:  aborting any active transactions
+[36mdatabase_1  |[0m 2023-07-01 21:57:52.176 UTC [1] LOG:  background worker "logical replication launcher" (PID 54) exited with exit code 1
+[36mdatabase_1  |[0m 2023-07-01 21:57:52.176 UTC [49] LOG:  shutting down
+[36mdatabase_1  |[0m 2023-07-01 21:57:52.184 UTC [49] LOG:  checkpoint starting: shutdown immediate
+[36mdatabase_1  |[0m 2023-07-01 21:57:52.207 UTC [49] LOG:  checkpoint complete: wrote 0 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.031 s; sync files=0, longest=0.000 s, average=0.000 s; distance=0 kB, estimate=59 kB
+[36mdatabase_1  |[0m 2023-07-01 21:57:52.213 UTC [1] LOG:  database system is shut down
+[36mdatabase_1  |[0m 
+[36mdatabase_1  |[0m PostgreSQL Database directory appears to contain a database; Skipping initialization
+[36mdatabase_1  |[0m 
+[36mdatabase_1  |[0m 2023-07-01 21:58:00.990 UTC [1] LOG:  starting PostgreSQL 15.1 on x86_64-pc-linux-musl, compiled by gcc (Alpine 11.2.1_git20220219) 11.2.1 20220219, 64-bit
+[36mdatabase_1  |[0m 2023-07-01 21:58:00.991 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+[36mdatabase_1  |[0m 2023-07-01 21:58:00.991 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+[36mdatabase_1  |[0m 2023-07-01 21:58:01.064 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+[36mdatabase_1  |[0m 2023-07-01 21:58:01.080 UTC [23] LOG:  database system was shut down at 2023-07-01 21:57:52 UTC
+[36mdatabase_1  |[0m 2023-07-01 21:58:01.096 UTC [1] LOG:  database system is ready to accept connections
+[36mdatabase_1  |[0m 2023-07-01 22:03:01.178 UTC [21] LOG:  checkpoint starting: time
+[36mdatabase_1  |[0m 2023-07-01 22:03:01.227 UTC [21] LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.010 s, sync=0.008 s, total=0.050 s; sync files=2, longest=0.005 s, average=0.004 s; distance=0 kB, estimate=0 kB
+[36mdatabase_1  |[0m 2023-07-01 22:29:08.843 UTC [1] LOG:  received fast shutdown request
+[36mdatabase_1  |[0m 2023-07-01 22:29:08.879 UTC [1] LOG:  aborting any active transactions
+[36mdatabase_1  |[0m 2023-07-01 22:29:08.883 UTC [1] LOG:  background worker "logical replication launcher" (PID 26) exited with exit code 1
+[36mdatabase_1  |[0m 2023-07-01 22:29:08.884 UTC [21] LOG:  shutting down
+[36mdatabase_1  |[0m 2023-07-01 22:29:09.029 UTC [21] LOG:  checkpoint starting: shutdown immediate
+[36mdatabase_1  |[0m 2023-07-01 22:29:09.187 UTC [21] LOG:  checkpoint complete: wrote 0 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.304 s; sync files=0, longest=0.000 s, average=0.000 s; distance=0 kB, estimate=0 kB
+[36mdatabase_1  |[0m 2023-07-01 22:29:09.193 UTC [1] LOG:  database system is shut down

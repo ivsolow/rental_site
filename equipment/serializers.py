@@ -17,6 +17,7 @@ class EquipmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Equipment
         fields = '__all__'
+        # fields = ['id', 'name', 'amount', 'description']
 
 
 class EquipmentAvailabilitySerializer(serializers.ModelSerializer):

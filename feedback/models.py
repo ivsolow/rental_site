@@ -15,7 +15,7 @@ class Feedback(models.Model):
     )
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
     content = models.CharField(max_length=1000)
-    equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE, null=True)
+    equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE, null=True, related_name='eq_feedback')
     date_created = models.DateField(auto_now_add=True)
     rate = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
 

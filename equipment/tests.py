@@ -73,7 +73,7 @@ def api_client(user):
 @pytest.mark.django_db
 def test_equipment(equipment_1, equipment_2):
     api_client = APIClient()
-    get_url = reverse('equipment-list')
+    get_url = reverse('equipment')
     response = api_client.get(get_url)
     # проверка полей
     equipment = response.data[0]
@@ -92,33 +92,33 @@ def test_search_and_filter(api_client, equipment_1, equipment_2, equipment_3):
     # api_client = APIClient()
 
     # без фильтрации
-    get_url = reverse('equipment-list')
+    get_url = reverse('equipment')
     response = api_client.get(get_url)
     assert len(response.data) == 3
 
     # поиск
-    get_url = reverse('equipment-list') + f'?search=ski'
+    get_url = reverse('equipment') + f'?search=ski'
     response = api_client.get(get_url)
     assert len(response.data) == 1
     assert response.data[0]['name'] == 'Salomon XDR 80 TI'
-    get_url = reverse('equipment-list') + f'?search=for'
+    get_url = reverse('equipment') + f'?search=for'
     response = api_client.get(get_url)
     assert len(response.data) == 2
     assert response.data[0]['category'] == 'Hiking'
     assert response.data[1]['category'] == 'Bikes'
 
     # без сортировки
-    get_url = reverse('equipment-list')
+    get_url = reverse('equipment')
     response = api_client.get(get_url)
     assert response.data[0]['name'] == 'Tent MSR Freelite 2'
 
     # сортировка
-    get_url = reverse('equipment-list') + '?ordering=category__name'
+    get_url = reverse('equipment') + '?ordering=category__name'
     response = api_client.get(get_url)
     assert response.data[0]['category'] == 'Bikes'
     assert response.data[1]['category'] == 'Hiking'
     assert response.data[2]['category'] == 'Winter sports'
-    get_url = reverse('equipment-list') + '?ordering=-price'
+    get_url = reverse('equipment') + '?ordering=-price'
     response = api_client.get(get_url)
     assert response.data[0]['price'] == '3000.0'
     assert response.data[1]['price'] == '1500.0'

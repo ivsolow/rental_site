@@ -43,3 +43,20 @@ def task_cart_create(cart_fields):
     serializer = AddCartSerializer(cart)
     return serializer.data
 
+
+# def task_cart_create_sync(cart_fields):
+#     user_id = int(cart_fields['user'])
+#     equipment_id = int(cart_fields['equipment'])
+#     user = CustomUser.objects.get(id=user_id)
+#     equipment = Equipment.objects.get(id=equipment_id)
+#
+#     cart = Cart.objects.create(
+#         user=user,
+#         amount=cart_fields['amount'],
+#         equipment=equipment,
+#         date_start=cart_fields['date_start'],
+#         date_end=cart_fields['date_end']
+#         )
+#
+#     serializer = AddCartSerializer(cart)
+#     return serializer.data

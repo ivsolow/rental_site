@@ -1,4 +1,5 @@
 from rest_framework import viewsets, status
+from celery import shared_task
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
@@ -13,7 +14,7 @@ class EquipmentViewSet(viewsets.ModelViewSet):
     queryset = (
         Equipment.objects.all()
         .select_related('category')
-        .prefetch_related('photos')
+        .prefetch_related('photos', 'eq_feedback')
         .order_by('id')
     )
 
@@ -21,6 +22,46 @@ class EquipmentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly, ]
     search_fields = ['name', 'description', 'category__name']
     ordering_fields = ['category__name', 'name', 'price', ]
+
+    # def list(self, *args, **kwargs):
+    #     print('hello')
+    #
+    #     message = '123'
+    #     user_email = 'send_123@smtp.com'
+    #     subject = 'Payment Confirmation'
+    #     from_email = 'rental_service-noreply@gmail.com'
+    #     recipient_list = [user_email]
+    #     send_mail(subject, message, from_email, recipient_list)
+    #     print('mail has sent')
+    #
+    #     task = task_queryset.delay()
+    #     result = task.get()
+    #     return Response(result, status=status.HTTP_200_OK)
+#
+#
+# @shared_task
+# def task_queryset():
+#     queryset = Equipment.objects.first()
+#     serializer = EquipmentSerializer(queryset)
+#     return serializer.data
+#
+#
+# @shared_task
+# def test_celery_task():
+#     result = {
+#         'message': 'This is test celery task!'
+#     }
+#     return result
+
+
+# class CeleryViewSet(viewsets.ViewSet):
+#     serializer_class = EquipmentSerializer
+#     permission_classes = [IsAuthenticatedOrReadOnly, ]
+#
+#     def list(self, request):
+#         result = test_celery_task.delay()
+#         response = result.get()
+#         return Response(response, status=status.HTTP_200_OK)
 
 
 class AvailableEquipmentViewSet(viewsets.ViewSet):

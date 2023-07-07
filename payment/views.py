@@ -70,7 +70,7 @@ class YookassaResponseApiView(APIView):
         except InvalidKeyPaymentException as e:
             return Response(e.message, status=e.status_code)
 
-        return Response(status=status.HTTP_200_OK)
+        return Response("Payment received", status=status.HTTP_200_OK)
 
 
 class PaymentStatusApiView(APIView):

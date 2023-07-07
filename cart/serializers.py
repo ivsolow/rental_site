@@ -33,6 +33,7 @@ class CartSerializer(serializers.ModelSerializer):
 
 class AddCartSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    amount = serializers.CharField()
     date_start = serializers.DateField()
     date_end = serializers.DateField()
 
@@ -40,7 +41,10 @@ class AddCartSerializer(serializers.ModelSerializer):
         # Вызов стандартной проверки остальных полей
         attrs = super().validate(attrs)
 
-        # Ваша логика проверки для полей date_start и date_end
+        # amount = attrs.get('amount')
+        # if not amount:
+        #     raise serializers.ValidationError('')
+
         date_start = attrs.get('date_start')
         date_end = attrs.get('date_end')
         if date_start and date_end:
