@@ -7,11 +7,11 @@ import pytest
 from django.urls import reverse
 
 from cart.models import Cart
-from cart.tests import cart_create, cart_create_2
-from equipment.tests import user, api_client, equipment_1, equipment_2
+from .cart_test import cart_create, cart_create_2
+from .equipment_test import user, api_client, equipment_1, equipment_2
 from payment.models import CreatedPayment, UserPaymentDetails
 from rentals.models import Rentals
-from rentals.tests import rental_create
+from .rentals_test import rental_create
 
 
 @pytest.fixture

@@ -1,0 +1,10 @@
+../venv/
+django_env/
+.git
+.gitignore
+.pytest_cache
+__pycache__/
+app.log
+celery.log
+celerybeat-schedule.db
+.coverage

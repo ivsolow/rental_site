@@ -7,20 +7,12 @@ services:
       -  "8000:8000"
     volumes:
       - .:/app
-
-    environment:
-      - DB_HOST=database
-      - DB_NAME=equipment_db
-      - DB_USER=postgres
-      - DB_PASS=1234
-      - DJANGO_SETTINGS_MODULE=equipment_rental_site.settings
-
+    env_file:
+      - .env
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
-
     depends_on:
       - database
-    restart: "always"
 
   smtp-server:
     build:
@@ -28,20 +20,16 @@ services:
     volumes:
       - .:/app
     command: python smtp-server.py
-    restart: "always"
 
   database:
     image: postgres:15.1-alpine
-    environment:
-      - POSTGRES_DB=equipment_db
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=1234
-    restart: "always"
+    env_file:
+      - .env
 
   redis:
     image: redis:7.0.5-alpine
     hostname: redis
-    restart: "always"
+    restart: always
 
   worker:
     build:
@@ -54,12 +42,8 @@ services:
     depends_on:
       - redis
       - database
-    environment:
-      - DB_HOST=database
-      - DB_NAME=equipment_db
-      - DB_USER=postgres
-      - DB_PASS=1234
-    restart: "always"
+    env_file:
+      - .env
 
   flower:
     build:
@@ -73,4 +57,3 @@ services:
       - redis
     ports:
       - "5555:5555"
-    restart: "always"

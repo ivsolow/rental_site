@@ -5,7 +5,7 @@ import pytest
 from django.urls import reverse
 
 from rentals.models import Rentals
-from equipment.tests import equipment_1, equipment_2, user, api_client
+from .equipment_test import equipment_1, equipment_2, user, api_client
 
 
 @pytest.fixture

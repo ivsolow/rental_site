@@ -4,7 +4,7 @@ from cart.models import Cart
 import pytest
 from django.urls import reverse
 from rest_framework import status
-from equipment.tests import user, api_client, equipment_1, equipment_2
+from .equipment_test import user, api_client, equipment_1, equipment_2
 
 
 @pytest.fixture
