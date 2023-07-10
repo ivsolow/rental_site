@@ -37,6 +37,18 @@ def feedback_2(user, api_client, equipment_2):
     return response
 
 
+@pytest.fixture
+def feedback_3(user, api_client, equipment_2):
+    eq_id_2 = equipment_2.id
+    data = {
+        'content': 'Test feedback 3',
+        'equipment': eq_id_2,
+        'rate': 3
+    }
+    response = api_client.post(reverse('feedback-list'), data=data, format='json')
+    return response
+
+
 @pytest.mark.django_db
 def test_create_feedback(feedback_1):
     response = feedback_1

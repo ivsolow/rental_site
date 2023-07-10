@@ -85,44 +85,6 @@ WSGI_APPLICATION = 'equipment_rental_site.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': os.getenv('DB_NAME'),
-#         'USER': os.getenv('DB_USER'),
-#         'PASSWORD': os.getenv('DB_PASSWORD'),
-#         'HOST': os.getenv('DB_HOST'),
-#         'PORT': os.getenv('DB_PORT'),
-#         'ATOMIC_REQUESTS': True
-#     },
-# }
-
-#
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': os.environ.get('DB_NAME'),
-#         'USER': os.environ.get('DB_USER'),
-#         'PASSWORD': os.environ.get('DB_PASS'),
-#         'HOST': os.environ.get('DB_HOST'),
-#         'PORT': os.environ.get('DB_PORT'),
-#         'ATOMIC_REQUESTS': True
-#     },
-# }
-
-#
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'equipment_db',
-#         'USER': 'postgres',
-#         'PASSWORD': 1234,
-#         'HOST': 'localhost',
-#         'PORT': 5432,
-#         'ATOMIC_REQUESTS': True
-#     },
-# }
-
 
 DATABASES = {
     'default': {

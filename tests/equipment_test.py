@@ -125,6 +125,28 @@ def test_search_and_filter(api_client, equipment_1, equipment_2, equipment_3):
     assert response.data[2]['price'] == '1000.0'
 
 
+from .feedback_test import feedback_1, feedback_2, feedback_3
+
+
+@pytest.mark.django_db
+def test_feedback_from_equipment(equipment_3, feedback_1, feedback_2, feedback_3, ):
+    api_client = APIClient()
+    list_url = reverse('equipment')
+    response = api_client.get(list_url)
+
+    print(response.data)
+    assert len(response.data)
+    assert response.data[0]['rating'] == 5.00
+    assert response.data[1]['rating'] == 3.50
+    assert response.data[2]['rating'] is None
+
+    detail_url = '/api/v1/equipment/2/'
+    response = api_client.get(detail_url)
+    assert len(response.data['feedback']) == 2
+    assert response.data['feedback'][0]['rate'] == 4
+    assert response.data['feedback'][1]['rate'] == 3
+
+
 @pytest.mark.django_db
 def test_cart_availability(equipment_1, equipment_2, api_client, user):
     """

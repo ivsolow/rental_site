@@ -10,6 +10,7 @@ def get_list_queryset():
         .select_related('category')
         .prefetch_related('photos')
         .annotate(rating=Avg('eq_feedback__rate'))
+        .order_by('id')
     )
     return queryset
 
