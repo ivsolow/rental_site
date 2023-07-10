@@ -34,24 +34,21 @@ class FeedbackSerializer(serializers.ModelSerializer):
         return name
 
 
-class EquipmentDetailSerializer(serializers.ModelSerializer):
+class EquipmentBaseSerializer(serializers.ModelSerializer):
     photos = EquipPhotoSerializer(many=True, read_only=True)
+    category = serializers.CharField()
+
+    class Meta:
+        model = Equipment
+        fields = '__all__'
+
+
+class EquipmentDetailSerializer(EquipmentBaseSerializer):
     feedback = FeedbackSerializer(many=True, read_only=True, source='eq_feedback')
-    category = serializers.CharField()
-
-    class Meta:
-        model = Equipment
-        fields = '__all__'
 
 
-class EquipmentListSerializer(serializers.ModelSerializer):
+class EquipmentListSerializer(EquipmentBaseSerializer):
     rating = serializers.SerializerMethodField()
-    photos = EquipPhotoSerializer(many=True, read_only=True)
-    category = serializers.CharField()
-
-    class Meta:
-        model = Equipment
-        fields = '__all__'
 
     def get_rating(self, obj):
         average = obj.rating
@@ -69,10 +66,8 @@ class EquipmentAvailabilitySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class AvailableEquipmentSerializer(serializers.ModelSerializer):
+class AvailableEquipmentSerializer(EquipmentListSerializer):
     available_amount = serializers.IntegerField()
-    category = serializers.CharField()
-    photos = EquipPhotoSerializer(many=True, read_only=True)
 
     class Meta:
         model = Equipment

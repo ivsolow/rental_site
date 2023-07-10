@@ -39,29 +39,20 @@ class CartViewSet(viewsets.ViewSet):
         serializer.is_valid(raise_exception=True)
         cart_fields = serializer.validated_data
         cart = is_cart_exists(cart_fields)
-        error_message = 'Cart data is not added'
-
         if cart:
             amount = cart_fields['amount']
             result = task_cart_add.delay(cart, amount)
-            task_data = result.get()
-            if result.ready():
-                message = {
-                    "name": f"{cart_fields['equipment']}",
-                    "amount": f"{amount}"
-                }
-
-                return Response(message, status.HTTP_201_CREATED)
-            return Response(error_message, status.HTTP_400_BAD_REQUEST)
+            message = {
+                "name": f"{cart_fields['equipment']}",
+                "amount": f"{amount}"
+            }
+            return Response(message, status.HTTP_201_CREATED)
 
         else:
             cart_fields['user'] = cart_fields['user'].id
             cart_fields['equipment'] = cart_fields['equipment'].id
             task_result = task_cart_create.delay(cart_fields)
-            task_data = task_result.get()
-            if task_result.ready():
-                return Response(task_data, status=status.HTTP_201_CREATED)
-            return Response(error_message, status.HTTP_400_BAD_REQUEST)
+            return Response(cart_fields, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, pk=None, amount=None):
         user = request.user

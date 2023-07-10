@@ -2,9 +2,11 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import ValidationError
 
 from equipment.models import Equipment
-from equipment.serializers import EquipmentListSerializer, EquipmentDetailSerializer, EquipmentAvailabilitySerializer, AvailableEquipmentSerializer
+from equipment.serializers import EquipmentListSerializer, EquipmentDetailSerializer, EquipmentAvailabilitySerializer, \
+    AvailableEquipmentSerializer
 from services.equipment.available_equipment import dates_is_valid, get_available_equipment
 from services.equipment.equipment_querysets import get_list_queryset, get_retrieve_queryset
 
@@ -47,7 +49,9 @@ class AvailableEquipmentViewSet(viewsets.ViewSet):
         serializer.is_valid(raise_exception=True)
         date_start = serializer.validated_data['date_start']
         date_end = serializer.validated_data['date_end']
-        if not dates_is_valid(date_start, date_end):
+        try:
+            dates_is_valid(date_start, date_end)
+        except ValidationError:
             return Response({'error': 'You cannot choose past time'}, status=status.HTTP_400_BAD_REQUEST)
 
         equipment = get_available_equipment(date_start, date_end)
