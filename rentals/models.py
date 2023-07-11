@@ -19,6 +19,7 @@ class Rentals(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         cache.delete(settings.AVAIL_EQUIPMENT_CACHE_KEY)
+        cache.delete(settings.RENTALS_CACHE_KEY)
 
     def __str__(self):
         return f'{self.equipment.name}: {self.date_start} - {self.date_end}'

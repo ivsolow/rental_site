@@ -2,6 +2,8 @@ from _decimal import Decimal
 
 from django.db.models import Sum, F, Value, CharField
 from django.db.models.functions import Concat
+from django.core.cache import cache
+from django.conf import settings
 
 from cart.models import Cart
 
@@ -14,53 +16,57 @@ def get_cart_queryset(user: int) -> dict:
             "Сумма": 0,
             "Даты_аренды": {"дата_начала": "", "дата_конца": ""}}
     """
-    queryset = (
-        Cart.objects
-        .filter(user=user)
-        .annotate(
-            cart_id=F('id'),
-            total_price=F('amount') * F('equipment__price'),
-            date_concat=Concat('date_start', 'date_end')  # Объединение даты начала и окончания в одно поле
-        )
-        .annotate(
-            total_amount=Sum('amount'),
-            total_summ=Sum('total_price')
-        )
-        .annotate(
-            equipment_info=Concat(      # Создание поля, по которому бы будем
-                'equipment__name',      # группировать несколько объектов корзины в один
-                Value(' '),
-                'date_concat',
-                Value(' '),
-                output_field=CharField()
+    cache_key = settings.CART_LIST_CACHE_KEY
+    cart_queryset = cache.get(cache_key)
+    if not cart_queryset:
+        cart_queryset = (
+            Cart.objects
+            .filter(user=user)
+            .annotate(
+                cart_id=F('id'),
+                total_price=F('amount') * F('equipment__price'),
+                date_concat=Concat('date_start', 'date_end')  # Объединение даты начала и окончания в одно поле
             )
+            .annotate(
+                total_amount=Sum('amount'),
+                total_summ=Sum('total_price')
+            )
+            .annotate(
+                equipment_info=Concat(      # Создание поля, по которому бы будем
+                    'equipment__name',      # группировать несколько объектов корзины в один
+                    Value(' '),
+                    'date_concat',
+                    Value(' '),
+                    output_field=CharField()
+                )
+            )
+            .values('equipment_info')       # Группировка результатов по полю equipment_info
+            .annotate(
+                equipment_name=F('equipment__name'),
+                date_concat=F('date_concat'),
+                total_amount=Sum('amount'),
+                total_summ=Sum('total_price')
+            ).values(
+                'id',
+                'equipment__id',
+                'equipment__name',
+                'equipment__price',
+                'date_concat',
+                'total_amount',
+                'total_summ'
+            )
+            .order_by('equipment__name',  # Сортировка по имени, дате и суммарному количеству
+                      'date_concat',
+                      'total_amount')
         )
-        .values('equipment_info')       # Группировка результатов по полю equipment_info
-        .annotate(
-            equipment_name=F('equipment__name'),
-            date_concat=F('date_concat'),
-            total_amount=Sum('amount'),
-            total_summ=Sum('total_price')
-        ).values(
-            'id',
-            'equipment__id',
-            'equipment__name',
-            'equipment__price',
-            'date_concat',
-            'total_amount',
-            'total_summ'
-        )
-        .order_by('equipment__name',  # Сортировка по имени, дате и суммарному количеству
-                  'date_concat',
-                  'total_amount')
-    )
-    return queryset
+        cache.set(cache_key, cart_queryset, 60 * 5)
+    return cart_queryset
 
 
 def get_cart_item_data(queryset: dict) -> dict:
     """
     Подсчет общей суммы и количества всех позиций.
-    Формирование queryset'a
+    Формирование json'a
     """
     cart_item_data = []
     total_positions = 0

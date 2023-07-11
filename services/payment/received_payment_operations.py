@@ -1,5 +1,7 @@
 from django.utils import timezone
 from django.core.mail import send_mail
+from django.conf import settings
+from django.core.cache import cache
 
 from cart.models import Cart
 from payment.models import CreatedPayment, UserPaymentDetails
@@ -21,12 +23,14 @@ def validate_and_create_payment(webhook_data: dict) -> bool:
 
     payment_status = webhook_data['event']
     if payment_status == 'payment.succeeded':
+        cache.delete(settings.RENTALS_CACHE_KEY)
+        cache.delete(settings.AVAIL_EQUIPMENT_CACHE_KEY)
+
         user_id = int(payment_data['metadata']['user_id'])
         new_rental_detail = start_new_rental(user_id)
         total_paid_sum = create_new_rental_info(payment_data, idempotence_key)
         task_send_payment_email.delay(new_rental_detail, total_paid_sum, user_id)
 
-    # обновление статуса оплаты
     update_payment_data = created_payment.update(payment_status=payment_status)
 
     return True

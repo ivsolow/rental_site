@@ -56,7 +56,6 @@ def test_rentals_list(api_client, user, rental_create, rental_create_2):
     url = reverse('rentals-list')
     response = api_client.get(url)
     assert response.status_code == 200
-    print(response.data)
     assert len(response.data) == 2
     assert response.data[0]['equipment']['name'] == 'Giant Trance Advanced Pro'
     assert response.data[0]['date_start'] == str(datetime.date.today())

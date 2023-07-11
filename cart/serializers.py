@@ -38,13 +38,7 @@ class AddCartSerializer(serializers.ModelSerializer):
     date_end = serializers.DateField()
 
     def validate(self, attrs):
-        # Вызов стандартной проверки остальных полей
         attrs = super().validate(attrs)
-
-        # amount = attrs.get('amount')
-        # if not amount:
-        #     raise serializers.ValidationError('')
-
         date_start = attrs.get('date_start')
         date_end = attrs.get('date_end')
         if date_start and date_end:

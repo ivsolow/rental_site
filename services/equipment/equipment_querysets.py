@@ -1,8 +1,8 @@
 from django.db.models import Avg, Prefetch
 from django.core.cache import cache
+from django.conf import settings
 
 from equipment.models import Equipment
-from django.conf import settings
 from users.models import CustomUser
 
 

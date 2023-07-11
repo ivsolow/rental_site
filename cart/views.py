@@ -1,11 +1,12 @@
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from django.conf import settings
+from django.core.cache import cache
 
 from cart.models import Cart
 from cart.serializers import AddCartSerializer, CartSerializer
 from cart.tasks import task_cart_add, task_cart_create
-
 from services.cart.cart_delete import get_cart_object, reduce_equipment_amount, cart_object_remove
 from services.cart.cart_items_list import get_cart_queryset, get_cart_item_data
 from services.cart.existing_cart_check import is_cart_exists
@@ -16,13 +17,14 @@ class CartViewSet(viewsets.ViewSet):
     Отображение содержимого корзины(GET-запрос)
     В ответ на GET-запрос, пользователь получает
     вложенный JSON.
-    Все таблицы с одинаковой датой и названием снаряжения
+    Все таблицы cart с одинаковой датой и названием снаряжения
     записываются в одно поле с суммарным значением полей amount.
 
     Обращение к методу create происходит по маршруту: /add_cart/.
     При добавлении нового снаряжения, если снаряжение с указанными датами
     и названием уже существует в корзине, то к уже имеющемуся просто будет добавлено
-    количество добавляемого. Иначе, будет создан новый объект.
+    количество добавляемого. Если такого объекта не существует,
+     будет создан новый объект.
     """
     permission_classes = [IsAuthenticated, ]
     serializer_class = CartSerializer
@@ -38,7 +40,11 @@ class CartViewSet(viewsets.ViewSet):
         serializer = AddCartSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         cart_fields = serializer.validated_data
+
+        cache.delete(settings.CART_LIST_CACHE_KEY)
+
         cart = is_cart_exists(cart_fields)
+
         if cart:
             amount = cart_fields['amount']
             result = task_cart_add.delay(cart, amount)
@@ -59,6 +65,9 @@ class CartViewSet(viewsets.ViewSet):
 
         try:
             cart_object = get_cart_object(pk, user)
+
+            cache.delete(settings.CART_LIST_CACHE_KEY)
+
             if amount and amount < cart_object.amount:
                 reduce_equipment_amount(cart_object, amount)
                 message = {

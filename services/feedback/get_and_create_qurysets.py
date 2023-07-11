@@ -13,6 +13,7 @@ def set_user_deleted(sender, instance: CustomUser, **kwargs) -> None:
     """
     Если пользователь захочет удалить аккаунт, то его отзыв удален не будет,
     вместо этого у отзыва будет другой пользователь 'Deleted_user@rentals.com'
+    Удаление аккаунта отслеживается с помощью сигнала "pre_delete"
     """
     deleted_user, created = CustomUser.objects.get_or_create(email='Deleted_user@rentals.com')
     feedback_list = Feedback.objects.filter(user=instance)

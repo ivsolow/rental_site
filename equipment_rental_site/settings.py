@@ -19,7 +19,6 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
 
@@ -81,7 +80,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'equipment_rental_site.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -95,7 +93,6 @@ DATABASES = {
         'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -115,7 +112,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -126,7 +122,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -143,7 +138,6 @@ YOOKASSA_SECRET_KEY = os.getenv('YOOKASSA_SECRET_KEY')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 LOGGING = {
     'version': 1,
     'handlers': {
@@ -156,7 +150,6 @@ LOGGING = {
         }
     }
 }
-
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -178,14 +171,11 @@ DJOSER = {
     },
 }
 
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp-server'
 EMAIL_PORT = 1025
 
-
 AUTH_USER_MODEL = 'users.CustomUser'
-
 
 CELERY_BROKER_URL = "redis://redis:6379/0"
 CELERY_RESULT_BACKEND = "redis://redis:6379/0"
@@ -201,3 +191,6 @@ EQUIPMENT_LIST_CACHE_KEY = 'equipment_list'
 EQUIPMENT_RETRIEVE_CACHE_KEY = 'equipment_retrieve'
 AVAIL_EQUIPMENT_CACHE_KEY = 'available_equipment'
 AVAIL_EQUIPMENT_DATES = 'equipment_dates'
+CART_LIST_CACHE_KEY = 'cart_list'
+RENTALS_CACHE_KEY = 'rentals_list'
+
