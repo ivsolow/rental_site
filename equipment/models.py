@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.cache import cache
+from django.conf import settings
 
 from services.equipment.upload_photos_path import upload_path
 
@@ -14,6 +16,12 @@ class Equipment(models.Model):
     class Meta:
         verbose_name = 'Снаряжение'
         verbose_name_plural = 'Снаряжение'
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        cache.delete(settings.EQUIPMENT_LIST_CACHE_KEY)
+        cache.delete(settings.EQUIPMENT_RETRIEVE_CACHE_KEY)
+        cache.delete(settings.AVAIL_EQUIPMENT_CACHE_KEY)
 
     def __str__(self):
         return self.name

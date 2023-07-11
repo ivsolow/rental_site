@@ -130,11 +130,11 @@ from .feedback_test import feedback_1, feedback_2, feedback_3
 
 @pytest.mark.django_db
 def test_feedback_from_equipment(equipment_3, feedback_1, feedback_2, feedback_3, ):
+    """Проверка отзывов у снаряжения по url 'api/v1/equipment/'"""
     api_client = APIClient()
     list_url = reverse('equipment')
     response = api_client.get(list_url)
 
-    print(response.data)
     assert len(response.data)
     assert response.data[0]['rating'] == 5.00
     assert response.data[1]['rating'] == 3.50

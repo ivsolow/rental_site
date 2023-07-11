@@ -190,4 +190,14 @@ AUTH_USER_MODEL = 'users.CustomUser'
 CELERY_BROKER_URL = "redis://redis:6379/0"
 CELERY_RESULT_BACKEND = "redis://redis:6379/0"
 
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6379/1",
+    }
+}
 
+EQUIPMENT_LIST_CACHE_KEY = 'equipment_list'
+EQUIPMENT_RETRIEVE_CACHE_KEY = 'equipment_retrieve'
+AVAIL_EQUIPMENT_CACHE_KEY = 'available_equipment'
+AVAIL_EQUIPMENT_DATES = 'equipment_dates'
