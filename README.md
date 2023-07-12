@@ -36,9 +36,9 @@ DB_HOST=   'database' <br>
 POSTGRES_DB=   # укажите имя базы данных PostgreSQL <br> 
 POSTGRES_USER=   # укажите имя пользователя базы данных <br>
 POSTGRES_PASSWORD=   # укажите пароль пользователя базы данных <br>
-DJANGO_SETTINGS_MODULE=   equipment_rental_site.settings <br>
+DJANGO_SETTINGS_MODULE=   equipment_rental_site.settings <br><br>
 
-Секртеный ключ можно сгенерировать с помощью следующего кода: <br>
+Секретный ключ можно сгенерировать с помощью следующего кода: <br>
 ```python
 import random
 import string
