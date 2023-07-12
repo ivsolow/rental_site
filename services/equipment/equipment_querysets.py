@@ -18,7 +18,7 @@ def get_list_queryset():
             .order_by('id')
         )
 
-        cache.set(cache_key, equipment_list, 60 * 5)
+        cache.set(cache_key, equipment_list, 60 * 10)
     return equipment_list
 
 
@@ -37,6 +37,6 @@ def get_retrieve_queryset():
                               )
                         )
 
-        cache.set(cache_key, equipment_item, 60 * 5)
+        cache.set(cache_key, equipment_item, 60 * 10)
     return equipment_item
 

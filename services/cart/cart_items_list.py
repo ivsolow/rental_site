@@ -59,7 +59,7 @@ def get_cart_queryset(user: int) -> dict:
                       'date_concat',
                       'total_amount')
         )
-        cache.set(cache_key, cart_queryset, 60 * 5)
+        cache.set(cache_key, cart_queryset, 60 * 10)
     return cart_queryset
 
 

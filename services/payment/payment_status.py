@@ -15,6 +15,7 @@ def get_payment_status(idempotence_key: str) -> dict:
         }
 
         if payment_status == 'payment.succeeded':
-            CreatedPayment.objects.filter(idempotence_key=idempotence_key).delete()
+            payment.delete()
+
         return response_message
     raise InvalidKeyPaymentException()

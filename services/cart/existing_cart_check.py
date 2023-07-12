@@ -1,7 +1,4 @@
-from datetime import date
-
 from cart.models import Cart
-from cart.serializers import AddCartSerializer
 
 
 def is_cart_exists(cart_fields: dict) -> Cart:

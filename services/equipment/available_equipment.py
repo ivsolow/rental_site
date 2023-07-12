@@ -51,7 +51,7 @@ def get_available_equipment(date_start: date, date_end: date) -> dict:
                 available_amount__gt=0
             ))
 
-        cache.set(cache_key, available_equipment, 60 * 5)
+        cache.set(cache_key, available_equipment, 60 * 10)
     return available_equipment
 
 
@@ -62,5 +62,5 @@ def check_dates_in_cache(date_start: date, date_end: date) -> None:
     cached_dates = cache.get(cache_key)
     if requested_dates != cached_dates:
         cache.delete(settings.AVAIL_EQUIPMENT_CACHE_KEY)
-        cache.set(cache_key, requested_dates, 60 * 5)
+        cache.set(cache_key, requested_dates, 60 * 10)
     return

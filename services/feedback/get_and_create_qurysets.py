@@ -33,7 +33,15 @@ def get_feedback_queryset(user: CustomUser) -> QuerySet:
 
 
 def get_equipment_for_feedback_queryset(user: CustomUser) -> QuerySet:
-    rented_equipment = Rentals.objects.filter(user=user, is_closed=True).values_list('equipment', flat=True)
+    """
+    Выборка снаряжения, на которое пользователь может оставить отзыв.
+    Это то снаряжение, которое было в аренде
+     у данного пользователя и имеет флаг is_closed=True
+    """
+    rented_equipment = (
+        Rentals.objects.filter(user=user, is_started=True, is_closed=True)
+        .values_list('equipment', flat=True)
+        )
     feedback_equipment = Feedback.objects.filter(user=user).values_list('equipment', flat=True)
     queryset = Equipment.objects.filter(id__in=rented_equipment).exclude(id__in=feedback_equipment)
     return queryset

@@ -1,14 +1,11 @@
-import datetime
 from datetime import date
 
 import pytest
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APIClient
 
 from equipment.models import Equipment
 from .equipment_test import user, api_client, equipment_1, equipment_2
-from rentals.models import Rentals
 from .rentals_test import rental_create, rental_create_2, closed_rental_create
 from feedback.models import Feedback
 

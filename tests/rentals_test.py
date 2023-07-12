@@ -46,6 +46,7 @@ def closed_rental_create(api_client, equipment_1, user):
         amount=5,
         date_start=f'{today}',
         date_end=f'{today + delta}',
+        is_started=True,
         is_closed=True
     )
     return

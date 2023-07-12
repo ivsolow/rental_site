@@ -16,7 +16,7 @@ class CartCheckException(APIException):
         self.params = params
 
 
-class ExpiredCartDateException(CartCheckException):
+class NotRelevantCartException(CartCheckException):
     default_code = 'Invalid dates'
     message = 'Некоторые даты неактуальны, проверьте корзину'
 
@@ -32,4 +32,5 @@ class EmptyCartException(CartCheckException):
 
 class InvalidKeyPaymentException(APIException):
     status_code = 400
-    message = 'Idempotence_key is incorrect'
+    default_detail = 'Invalid key payment'
+    default_code = 'invalid_key_payment'

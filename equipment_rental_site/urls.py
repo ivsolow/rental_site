@@ -29,13 +29,6 @@ urlpatterns = [
     path('', include('payment.urls')),
     path('', include('rentals.urls')),
     path('', include('feedback.urls')),
-    # path('', include('cart.test_logic_for_celery_task')),
 ]
-
-
-# urlpatterns += [
-#
-#     path('__debug__/', include('debug_toolbar.urls')),
-# ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

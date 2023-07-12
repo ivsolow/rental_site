@@ -3,7 +3,8 @@ import asyncore
 
 
 class CustomSMTPServer(smtpd.SMTPServer):
-    def process_message(self, peer, mailfrom, rcpttos, data, **kwargs):
+    """Тестовый SMTP-сервер для приема писем и вывода их содержимого в терминал"""
+    def process_message(self, peer, mailfrom, rcpttos, data, **kwargs) -> None:
         decoded_message = data.decode('utf-8')
         print('Received message from:', peer)
         print('Message addressed from:', mailfrom)

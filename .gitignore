@@ -6,6 +6,8 @@ __pycache__/
 .env
 .idea
 /djangoenv
+/media
+**/migrations/
 /cache
 test_logic_for_celery_task.py
 test_test.py

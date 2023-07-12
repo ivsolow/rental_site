@@ -1,5 +1,3 @@
-from typing import Union
-
 
 class Upload:
     """Переменные, используемые в функции upload_path"""

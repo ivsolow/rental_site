@@ -11,29 +11,58 @@ from services.payment.exceptions import InvalidKeyPaymentException
 from users.models import CustomUser
 
 
-def validate_and_create_payment(webhook_data: dict) -> bool:
+def create_new_payment(webhook_data: dict) -> dict:
     """Валидация ответа от Юкассы по ключу idempotence_key,
     а также создание новой аренды в случае успеха"""
-    payment_data = webhook_data['object']
-    idempotence_key = payment_data['metadata']['idempotence_key']
-    created_payment = CreatedPayment.objects.filter(idempotence_key=idempotence_key)
+    validated_data = validate_webhook_data(webhook_data)
 
-    if not created_payment.exists():
-        raise InvalidKeyPaymentException()
+    payment_data = validated_data['payment_data']
+    idempotence_key = validated_data['idempotence_key']
+    created_payment = validated_data['created_payment']
+    payment_status = validated_data['payment_status']
 
-    payment_status = webhook_data['event']
+    created_payment.update(payment_status=payment_status)
+
     if payment_status == 'payment.succeeded':
         cache.delete(settings.RENTALS_CACHE_KEY)
         cache.delete(settings.AVAIL_EQUIPMENT_CACHE_KEY)
 
         user_id = int(payment_data['metadata']['user_id'])
         new_rental_detail = start_new_rental(user_id)
-        total_paid_sum = create_new_rental_info(payment_data, idempotence_key)
+        total_paid_sum = create_new_rental_info(user_id, payment_data, idempotence_key)
         task_send_payment_email.delay(new_rental_detail, total_paid_sum, user_id)
+        created_payment.delete()
+    message = {
+        "payment_status": f'{payment_status}'
+    }
+    return message
 
-    update_payment_data = created_payment.update(payment_status=payment_status)
 
-    return True
+def validate_webhook_data(webhook_data: dict) -> dict:
+    """Валидация ответа, поступившего на вебхук"""
+    payment_data = webhook_data.get('object')
+    if not payment_data or not isinstance(payment_data, dict) or 'metadata' not in payment_data:
+        raise ValueError('Invalid payment data')
+
+    idempotence_key = payment_data['metadata'].get('idempotence_key')
+    if not idempotence_key:
+        raise ValueError('Invalid idempotence key')
+
+    created_payment = CreatedPayment.objects.filter(idempotence_key=idempotence_key)
+    if not created_payment.exists():
+        raise InvalidKeyPaymentException()
+
+    payment_status = webhook_data.get('event')
+    if not payment_status:
+        raise ValueError('Invalid payment status')
+
+    result = {
+        'payment_data': payment_data,
+        'payment_status': payment_status,
+        'created_payment': created_payment,
+        'idempotence_key': idempotence_key
+    }
+    return result
 
 
 def start_new_rental(user_id: int) -> list:
@@ -69,10 +98,11 @@ def start_new_rental(user_id: int) -> list:
     return equipment_list
 
 
-def create_new_rental_info(payment_data: dict, idempotence_key: str) -> int:
+def create_new_rental_info(user_id: int, payment_data: dict, idempotence_key: str) -> int:
     """Запись информации об успешном платеже"""
     paid_amount = payment_data['amount']['value']
     payment = UserPaymentDetails.objects.create(
+        user_id=user_id,
         payment_id=payment_data['id'],
         idempotence_key=idempotence_key,
         date_payment=timezone.now(),
@@ -85,6 +115,7 @@ def create_new_rental_info(payment_data: dict, idempotence_key: str) -> int:
 
 
 def send_email_success_payment(new_rental_detail: list, total_paid_sum: int, user_id: int) -> None:
+    """Отправка письма на почту при успешной оплате"""
     message = 'Оплата прошла успешно. Спасибо, что воспользовались нашим прокатом.\n\n' \
               f"Детали заказа: \n {get_payment_details_string(new_rental_detail)}\n\n" \
               f"Итоговая сумма: {total_paid_sum} рублей"
@@ -103,5 +134,5 @@ def get_payment_details_string(new_rental_detail: list) -> str:
                           f"Количество: {rental_item['amount']}\n" \
                           f"Даты проката: {rental_item['date_start']} - {rental_item['date_end']}\n" \
                           f"Сумма: {rental_item['item_summ']} рублей\n" \
-                          f"{'_'*40}\n"
+                          f"{'_' * 40}\n"
     return details_string

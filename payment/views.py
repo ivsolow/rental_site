@@ -10,8 +10,8 @@ from .serializers import PaymentSerializer, PaymentStatusSerializer
 from services.payment.check_cart_before_payment import availability_check
 from services.payment.payment_preparations import get_confirmation_url
 from services.payment.payment_status import get_payment_status
-from services.payment.received_payment_operations import validate_and_create_payment
-from services.payment.exceptions import UnavailableCartItemsException, ExpiredCartDateException, \
+from services.payment.received_payment_operations import create_new_payment
+from services.payment.exceptions import UnavailableCartItemsException, NotRelevantCartException, \
                                                                        InvalidKeyPaymentException
 
 
@@ -30,7 +30,7 @@ class CartCheckViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         try:
             availability_check(request)
-        except (ExpiredCartDateException, UnavailableCartItemsException) as e:
+        except (NotRelevantCartException, UnavailableCartItemsException) as e:
             error_details = {
                 'message': e.message,
                 'params': e.params
@@ -66,11 +66,11 @@ class YookassaResponseApiView(APIView):
         webhook_data = response.data
 
         try:
-            validate_and_create_payment(webhook_data)
-        except InvalidKeyPaymentException as e:
-            return Response(e.message, status=e.status_code)
+            payment_status = create_new_payment(webhook_data)
+        except (ValueError, InvalidKeyPaymentException) as e:
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response("Payment received", status=status.HTTP_200_OK)
+        return Response(payment_status, status=status.HTTP_200_OK)
 
 
 class PaymentStatusApiView(APIView):

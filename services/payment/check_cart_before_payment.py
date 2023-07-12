@@ -7,7 +7,7 @@ from django.db.models import Sum
 from cart.models import Cart
 from equipment.models import Equipment
 from rentals.models import Rentals
-from services.payment.exceptions import (ExpiredCartDateException,
+from services.payment.exceptions import (NotRelevantCartException,
                                          UnavailableCartItemsException,
                                          EmptyCartException)
 
@@ -33,7 +33,7 @@ def availability_check(request: Request) -> bool:
         occupied_amount = get_occupied_amount(equipment, date_start, date_end)
         available_amount = equipment.amount - occupied_amount
         if date_start < date.today():
-            raise ExpiredCartDateException(
+            raise NotRelevantCartException(
                 params={
                     'equipment_name': equipment.name,
                     'date_start': date_start,
