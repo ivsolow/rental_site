@@ -1,4 +1,4 @@
-# Equipment rental_site
+# Equipment rental site
 
 ### Бэкенд для сайта проката туристического снаряжения на Django Rest Framework.
 
