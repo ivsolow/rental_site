@@ -9,11 +9,11 @@ class CreatedPayment(models.Model):
     user_id = models.IntegerField()
     idempotence_key = models.CharField(max_length=50, unique=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_status = models.CharField(default='Created')
+    payment_status = models.CharField(default='Created', max_length=50)
 
 
 class UserPaymentDetails(models.Model):
-    user_id = models.IntegerField()
+    user_id = models.IntegerField(default=None, null=True)
     payment_id = models.CharField(max_length=36)
     idempotence_key = models.CharField(max_length=36)
     date_payment = models.DateTimeField(default=timezone.now)

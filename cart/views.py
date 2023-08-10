@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema, OpenApiExample
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -7,6 +8,7 @@ from django.core.cache import cache
 from cart.models import Cart
 from cart.serializers import AddCartSerializer, CartSerializer
 from cart.tasks import task_cart_add, task_cart_create
+from equipment_rental_site.swagger_examples import CART_LIST_EXAMPLE
 from services.cart.cart_delete import get_cart_object, reduce_equipment_amount, cart_object_remove
 from services.cart.cart_items_list import get_cart_queryset, get_cart_item_data
 from services.cart.existing_cart_check import is_cart_exists
@@ -14,21 +16,36 @@ from services.cart.existing_cart_check import is_cart_exists
 
 class CartViewSet(viewsets.ViewSet):
     """
-    Отображение содержимого корзины(GET-запрос)
-    В ответ на GET-запрос, пользователь получает
-    вложенный JSON.
-    Все таблицы cart с одинаковой датой и названием снаряжения
-    записываются в одно поле с суммарным значением полей amount.
+    View for managing cart contents.
 
-    Обращение к методу create происходит по маршруту: /add_cart/.
-    При добавлении нового снаряжения, если снаряжение с указанными датами
-    и названием уже существует в корзине, то к уже имеющемуся просто будет добавлено
-    количество добавляемого. Если такого объекта не существует,
-     будет создан новый объект.
+    GET:
+    Returns a nested JSON with information about the items in the cart.
+    Each cart entry represents a combination of equipment, its amount, and associated dates.
+    All cart entries with the same date and equipment name are combined into a single entry with the total amount.
+
+    POST:
+    Adds an item to the cart. If an item with the same dates and equipment name already exists,
+    its amount will be increased by the added amount. If the item does not exist, a new entry will be created.
+
+    DELETE:
+    Deletes a cart item by its ID. If an `amount` query parameter is provided, it will reduce the amount
+    of the item by the specified value. If the amount becomes zero or negative, the item will be completely removed.
+    Returns a success message upon successful deletion.
     """
+
     permission_classes = [IsAuthenticated, ]
     serializer_class = CartSerializer
 
+    @extend_schema(
+        description="get cart items",
+        summary="Test description of cart",
+        examples=[
+            OpenApiExample(
+                name="Cart list",
+                value=CART_LIST_EXAMPLE,
+            )
+        ],
+    )
     def list(self, request):
         user = request.user
         queryset = get_cart_queryset(user)
@@ -36,6 +53,7 @@ class CartViewSet(viewsets.ViewSet):
 
         return Response(response_data)
 
+    # @extend_schema(description="create the cart")
     def create(self, request):
         serializer = AddCartSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
@@ -60,6 +78,7 @@ class CartViewSet(viewsets.ViewSet):
             task_result = task_cart_create.delay(cart_fields)
             return Response(cart_fields, status=status.HTTP_201_CREATED)
 
+    # @extend_schema(description="endpoint for deleting cart")
     def destroy(self, request, pk=None, amount=None):
         user = request.user
 

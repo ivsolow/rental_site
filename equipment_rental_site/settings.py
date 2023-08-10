@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'djoser',
     'django_extensions',
+    'drf_yasg',
+    'drf_spectacular',
 
     'equipment',
     'cart',
@@ -157,6 +159,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 DJOSER = {
@@ -193,4 +196,3 @@ AVAIL_EQUIPMENT_CACHE_KEY = 'available_equipment'
 AVAIL_EQUIPMENT_DATES = 'equipment_dates'
 CART_LIST_CACHE_KEY = 'cart_list'
 RENTALS_CACHE_KEY = 'rentals_list'
-
