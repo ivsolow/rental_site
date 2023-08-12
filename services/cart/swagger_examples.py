@@ -9,7 +9,7 @@ CART_LIST_RESPONSE = {
                 "price": "3000.0"
             },
             "amount": 2,
-            "summ": 6000.0,
+            "total_sum": 6000.0,
             "dates": {
                 "date_start": "2023-08-11",
                 "date_end": "2023-08-24"
@@ -17,9 +17,8 @@ CART_LIST_RESPONSE = {
         }
     ],
     "total_positions": 2,
-    "total_summ": 6000.0
+    "total_sum": 6000.0
 }
-
 
 CART_CREATE_REQUEST = {
     "equipment": "1",
@@ -35,22 +34,21 @@ CART_CREATE_RESPONSE = {
     "date_end": "2024-08-08",
 }
 
-
 CART_UPDATE_RESPONSE = {
-        "status": "Cart updated successfully",
-        "equipment": "1",
-        "amount": "2"
+    "status": "Cart updated successfully",
+    "equipment": "1",
+    "amount": "2"
 }
-
 
 CART_DELETE_ITEMS = {
-        "deleted": "Canyon Strive CFR",
-        "amount": "3",
+    "deleted": "Canyon Strive CFR",
+    "amount": "3",
 }
-
 
 CART_DELETE_OBJECT = {
-        "response": "Cart object deleted successfully"
+    "response": "Cart object deleted successfully"
 }
 
-CART_ITEM_NOT_FOUND = {'error': 'Cart item not found.'}
+CART_ITEM_NOT_FOUND = {
+    "error": "Cart item not found."
+}

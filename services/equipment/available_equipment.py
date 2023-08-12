@@ -9,15 +9,15 @@ from rest_framework.exceptions import ValidationError
 from equipment.models import Equipment
 
 
-def dates_is_valid(date_start: date, date_end: date) -> bool:
-    """Проверка дат, если они позже, чем сегодня"""
-    if date_start < date.today() or date_end < date.today():
+def dates_are_valid(date_start: date, date_end: date) -> bool:
+    """Check if dates are later than today"""
+    if date_start < date.today() or date_end < date.today() or date_end < date_start:
         raise ValidationError()
     return True
 
 
 def get_available_equipment(date_start: date, date_end: date) -> dict:
-    """Выборка снаряжения, доступного в необходимые даты"""
+    """Retrieve available equipment for the given dates"""
     check_dates_in_cache(date_start, date_end)
 
     cache_key = settings.AVAIL_EQUIPMENT_CACHE_KEY
@@ -56,7 +56,7 @@ def get_available_equipment(date_start: date, date_end: date) -> dict:
 
 
 def check_dates_in_cache(date_start: date, date_end: date) -> None:
-    """Проверка дат. Если дата в запросе поменялась, то кэш инвалидируется"""
+    """Check dates. If the requested dates have changed, invalidate the cache"""
     requested_dates = str(date_start) + str(date_end)
     cache_key = settings.AVAIL_EQUIPMENT_DATES
     cached_dates = cache.get(cache_key)
