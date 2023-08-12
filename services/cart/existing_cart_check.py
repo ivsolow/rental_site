@@ -2,7 +2,7 @@ from cart.models import Cart
 
 
 def is_cart_exists(cart_fields: dict) -> Cart:
-    """Проверяем, существует ли объект корзины с такими же полями"""
+    """Check if a cart object with the same fields exists"""
     cart = Cart.objects.filter(
         user=cart_fields['user'],
         equipment=cart_fields['equipment'],

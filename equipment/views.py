@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -16,6 +17,7 @@ class EquipmentViewSet(viewsets.ModelViewSet):
     search_fields = ['name', 'description', 'category__name']
     ordering_fields = ['category__name', 'name', 'price', ]
 
+    # @extend_schema(tags=["Posts"])
     def get_queryset(self):
         if self.action == 'list':
             return get_list_queryset()

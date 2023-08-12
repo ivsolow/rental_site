@@ -1,6 +1,8 @@
 import smtpd
 import asyncore
 
+# SMTP_SERVER_HOST = 'smtp-server'
+SMTP_SERVER_HOST = 'localhost'
 
 class CustomSMTPServer(smtpd.SMTPServer):
     """Тестовый SMTP-сервер для приема писем и вывода их содержимого в терминал"""
@@ -14,7 +16,7 @@ class CustomSMTPServer(smtpd.SMTPServer):
         print(decoded_message)
 
 
-server = CustomSMTPServer(('smtp-server', 1025), None)
+server = CustomSMTPServer((SMTP_SERVER_HOST, 1025), None)
 
 print('SMTP server running on localhost:1025')
 asyncore.loop()

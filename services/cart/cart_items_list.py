@@ -9,13 +9,6 @@ from cart.models import Cart
 
 
 def get_cart_queryset(user: int) -> dict:
-    """
-    queryset, в котором делается выборка со следующими полями:
-    {"Снаряжение": {"поля_модели_equipment": "..."},
-            "Количество": 0,
-            "Сумма": 0,
-            "Даты_аренды": {"дата_начала": "", "дата_конца": ""}}
-    """
     cache_key = settings.CART_LIST_CACHE_KEY
     cart_queryset = cache.get(cache_key)
     if not cart_queryset:
@@ -25,22 +18,22 @@ def get_cart_queryset(user: int) -> dict:
             .annotate(
                 cart_id=F('id'),
                 total_price=F('amount') * F('equipment__price'),
-                date_concat=Concat('date_start', 'date_end')  # Объединение даты начала и окончания в одно поле
+                date_concat=Concat('date_start', 'date_end')
             )
             .annotate(
                 total_amount=Sum('amount'),
                 total_summ=Sum('total_price')
             )
             .annotate(
-                equipment_info=Concat(      # Создание поля, по которому бы будем
-                    'equipment__name',      # группировать несколько объектов корзины в один
+                equipment_info=Concat(
+                    'equipment__name',
                     Value(' '),
                     'date_concat',
                     Value(' '),
                     output_field=CharField()
                 )
             )
-            .values('equipment_info')       # Группировка результатов по полю equipment_info
+            .values('equipment_info')
             .annotate(
                 equipment_name=F('equipment__name'),
                 date_concat=F('date_concat'),
@@ -55,7 +48,7 @@ def get_cart_queryset(user: int) -> dict:
                 'total_amount',
                 'total_summ'
             )
-            .order_by('equipment__name',  # Сортировка по имени, дате и суммарному количеству
+            .order_by('equipment__name',
                       'date_concat',
                       'total_amount')
         )
@@ -65,14 +58,14 @@ def get_cart_queryset(user: int) -> dict:
 
 def get_cart_item_data(queryset: dict) -> dict:
     """
-    Подсчет общей суммы и количества всех позиций.
-    Формирование json'a
+    Calculate the total sum and quantity of all positions.
+    Generate JSON data.
     """
     cart_item_data = []
     total_positions = 0
     total_summ = Decimal(0.0)
 
-    for item in queryset:  # формирование содержимого корзины в виде вложенного JSON-а
+    for item in queryset:   # Generating the content of the cart as a nested JSON
         equipment_name = item['equipment__name']
         equipment_id = item['equipment__id']
         equipment_price = item['equipment__price']

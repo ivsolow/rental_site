@@ -1,4 +1,4 @@
-from drf_spectacular.utils import extend_schema, OpenApiExample
+from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -7,8 +7,9 @@ from django.core.cache import cache
 
 from cart.models import Cart
 from cart.serializers import AddCartSerializer, CartSerializer
-from cart.tasks import task_cart_add, task_cart_create
-from equipment_rental_site.swagger_examples import CART_LIST_EXAMPLE
+from services.cart.decorators_kwargs import CART_LIST_DECORATOR_KWARGS, CART_CREATE_DECORATOR_KWARGS, \
+    CART_DESTROY_DECORATOR_KWARGS
+from services.cart.cart_create_or_update import cart_update, create_new_object
 from services.cart.cart_delete import get_cart_object, reduce_equipment_amount, cart_object_remove
 from services.cart.cart_items_list import get_cart_queryset, get_cart_item_data
 from services.cart.existing_cart_check import is_cart_exists
@@ -36,16 +37,7 @@ class CartViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated, ]
     serializer_class = CartSerializer
 
-    @extend_schema(
-        description="get cart items",
-        summary="Test description of cart",
-        examples=[
-            OpenApiExample(
-                name="Cart list",
-                value=CART_LIST_EXAMPLE,
-            )
-        ],
-    )
+    @extend_schema(**CART_LIST_DECORATOR_KWARGS)
     def list(self, request):
         user = request.user
         queryset = get_cart_queryset(user)
@@ -53,32 +45,30 @@ class CartViewSet(viewsets.ViewSet):
 
         return Response(response_data)
 
-    # @extend_schema(description="create the cart")
+    @extend_schema(**CART_CREATE_DECORATOR_KWARGS)
     def create(self, request):
         serializer = AddCartSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         cart_fields = serializer.validated_data
-
+        user = request.user
+        print(cart_fields)
         cache.delete(settings.CART_LIST_CACHE_KEY)
 
         cart = is_cart_exists(cart_fields)
 
         if cart:
             amount = cart_fields['amount']
-            result = task_cart_add.delay(cart, amount)
-            message = {
-                "name": f"{cart_fields['equipment']}",
-                "amount": f"{amount}"
-            }
-            return Response(message, status.HTTP_201_CREATED)
+            response_message = cart_update(user, cart_fields, amount)
+
+            return Response(response_message, status.HTTP_201_CREATED)
 
         else:
-            cart_fields['user'] = cart_fields['user'].id
-            cart_fields['equipment'] = cart_fields['equipment'].id
-            task_result = task_cart_create.delay(cart_fields)
-            return Response(cart_fields, status=status.HTTP_201_CREATED)
+            cart_obj = create_new_object(cart_fields)
+            response_message = AddCartSerializer(cart_obj)
 
-    # @extend_schema(description="endpoint for deleting cart")
+            return Response(response_message.data, status=status.HTTP_201_CREATED)
+
+    @extend_schema(**CART_DESTROY_DECORATOR_KWARGS)
     def destroy(self, request, pk=None, amount=None):
         user = request.user
 
@@ -96,6 +86,9 @@ class CartViewSet(viewsets.ViewSet):
                 return Response(message, status=status.HTTP_200_OK)
             else:
                 cart_object_remove(cart_object)
-                return Response("Cart object deleted successfully", status=status.HTTP_200_OK)
+                messge = {
+                    "response": "Cart object deleted successfully"
+                }
+                return Response(messge, status=status.HTTP_200_OK)
         except Cart.DoesNotExist:
             return Response({'error': 'Cart item not found.'}, status=status.HTTP_404_NOT_FOUND)
