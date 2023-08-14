@@ -18,9 +18,9 @@ class FeedbackEquipmentSerializer(serializers.ModelSerializer):
 
 
 class FeedbackSerializer(serializers.ModelSerializer):
-    feedback_photo = FeedbackPhotoSerializer(many=True)
+    feedback_photo = FeedbackPhotoSerializer(read_only=True, many=True)
     date_created = serializers.DateField(read_only=True)
-    equipment = FeedbackEquipmentSerializer()
+    equipment = FeedbackEquipmentSerializer(read_only=True)
 
     class Meta:
         model = Feedback
@@ -46,3 +46,8 @@ class AddFeedbackSerializer(serializers.ModelSerializer):
         create_feedback_photos(feedback, feedback_photos)
 
         return feedback
+
+
+
+
+

@@ -213,3 +213,4 @@ AVAIL_EQUIPMENT_CACHE_KEY = 'available_equipment'
 AVAIL_EQUIPMENT_DATES = 'equipment_dates'
 CART_LIST_CACHE_KEY = 'cart_list'
 RENTALS_CACHE_KEY = 'rentals_list'
+
