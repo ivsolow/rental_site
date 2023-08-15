@@ -1,14 +1,15 @@
 from rest_framework import serializers
 
 from equipment.models import Equipment
+from equipment.serializers import FeedbackPhotoSerializer
 from feedback.models import Feedback, FeedbackPhoto
 from services.feedback.get_and_create_qurysets import create_feedback_photos, create_feedback_obj
 
 
-class FeedbackPhotoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = FeedbackPhoto
-        fields = ['photo', ]
+# class FeedbackPhotoSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = FeedbackPhoto
+#         fields = ['photo', ]
 
 
 class FeedbackEquipmentSerializer(serializers.ModelSerializer):
@@ -18,9 +19,9 @@ class FeedbackEquipmentSerializer(serializers.ModelSerializer):
 
 
 class FeedbackSerializer(serializers.ModelSerializer):
-    feedback_photo = FeedbackPhotoSerializer(many=True)
+    feedback_photo = FeedbackPhotoSerializer(read_only=True, many=True)
     date_created = serializers.DateField(read_only=True)
-    equipment = FeedbackEquipmentSerializer()
+    equipment = FeedbackEquipmentSerializer(read_only=True)
 
     class Meta:
         model = Feedback
@@ -46,3 +47,8 @@ class AddFeedbackSerializer(serializers.ModelSerializer):
         create_feedback_photos(feedback, feedback_photos)
 
         return feedback
+
+
+
+
+

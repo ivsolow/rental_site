@@ -13,3 +13,4 @@ test_logic_for_celery_task.py
 test_test.py
 celerybeat-schedule.db
 celery.log
+123.py

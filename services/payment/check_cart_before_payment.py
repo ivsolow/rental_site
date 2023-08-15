@@ -14,10 +14,10 @@ from services.payment.exceptions import (NotRelevantCartException,
 
 def availability_check(request: Request) -> bool:
     """
-    Проверка на пустую корзину и на даты в прошлом.
-    Если она не пустая, то проверяем, не
-    превышает ли количество снаряжения доступное количество,
-    и нет ли в ней снаряжения на даты, позже чем сегодня
+    Check for an empty cart and past dates.
+    If the cart is not empty, verify that the equipment quantity
+    does not exceed availability, and there is no equipment
+    in the cart for dates later than today.
     """
     user = request.user
     cart = Cart.objects.filter(user=user)
@@ -55,7 +55,7 @@ def availability_check(request: Request) -> bool:
 
 
 def get_occupied_amount(equipment: Equipment, date_start: date, date_end: date) -> Rentals:
-    """Возвращаем количество занятого снаряжения на конкретные даты"""
+    """Retrieve the amount of occupied equipment for specific dates."""
     occupied_amount = Rentals.objects.filter(
         equipment=equipment,
         date_start__lte=date_end,

@@ -11,9 +11,9 @@ from users.models import CustomUser
 @receiver(pre_delete, sender=CustomUser)
 def set_user_deleted(sender, instance: CustomUser, **kwargs) -> None:
     """
-    Если пользователь захочет удалить аккаунт, то его отзыв удален не будет,
-    вместо этого у отзыва будет другой пользователь 'Deleted_user@rentals.com'
-    Удаление аккаунта отслеживается с помощью сигнала "pre_delete"
+    When a user requests to delete their account, their associated feedback will not be removed.
+    Instead, the feedback will be transferred to another user identified as 'Deleted_user@rentals.com'.
+    This action is managed through the "pre_delete" signal.
     """
     deleted_user, created = CustomUser.objects.get_or_create(email='Deleted_user@rentals.com')
     feedback_list = Feedback.objects.filter(user=instance)
@@ -34,9 +34,8 @@ def get_feedback_queryset(user: CustomUser) -> QuerySet:
 
 def get_equipment_for_feedback_queryset(user: CustomUser) -> QuerySet:
     """
-    Выборка снаряжения, на которое пользователь может оставить отзыв.
-    Это то снаряжение, которое было в аренде
-     у данного пользователя и имеет флаг is_closed=True
+    Retrieves equipment available for feedback submission by the user.
+    This equipment includes items that the user rented and have the 'is_closed' flag set to True.
     """
     rented_equipment = (
         Rentals.objects.filter(user=user, is_started=True, is_closed=True)

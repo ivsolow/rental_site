@@ -19,7 +19,7 @@ class FeedbackPhotoSerializer(serializers.ModelSerializer):
         fields = ['photo', ]
 
 
-class FeedbackSerializer(serializers.ModelSerializer):
+class EquipmentFeedbackSerializer(serializers.ModelSerializer):
     feedback_photos = FeedbackPhotoSerializer(many=True, read_only=True, source='feedback_photo')
     username = serializers.SerializerMethodField()
 
@@ -27,7 +27,7 @@ class FeedbackSerializer(serializers.ModelSerializer):
         model = Feedback
         fields = ('username', 'content', 'rate', 'feedback_photos')
 
-    def get_username(self, obj):
+    def get_username(self, obj) -> str:
         name = obj.user.first_name
         if not name:
             name = 'user'
@@ -44,13 +44,13 @@ class EquipmentBaseSerializer(serializers.ModelSerializer):
 
 
 class EquipmentDetailSerializer(EquipmentBaseSerializer):
-    feedback = FeedbackSerializer(many=True, read_only=True, source='eq_feedback')
+    feedback = EquipmentFeedbackSerializer(many=True, read_only=True, source='eq_feedback')
 
 
 class EquipmentListSerializer(EquipmentBaseSerializer):
     rating = serializers.SerializerMethodField()
 
-    def get_rating(self, obj):
+    def get_rating(self, obj) -> Decimal:
         average = obj.rating
         if average is not None:
             average = Decimal(average).quantize(Decimal('0.00'))

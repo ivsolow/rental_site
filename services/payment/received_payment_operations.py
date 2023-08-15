@@ -12,8 +12,10 @@ from users.models import CustomUser
 
 
 def create_new_payment(webhook_data: dict) -> dict:
-    """Валидация ответа от Юкассы по ключу idempotence_key,
-    а также создание новой аренды в случае успеха"""
+    """
+    Validate the YooKassa response using the idempotence_key
+    and initiate a new rental upon successful payment.
+    """
     validated_data = validate_webhook_data(webhook_data)
 
     payment_data = validated_data['payment_data']
@@ -39,7 +41,7 @@ def create_new_payment(webhook_data: dict) -> dict:
 
 
 def validate_webhook_data(webhook_data: dict) -> dict:
-    """Валидация ответа, поступившего на вебхук"""
+    """Create rental objects for the user upon successful payment and clear the user's cart."""
     payment_data = webhook_data.get('object')
     if not payment_data or not isinstance(payment_data, dict) or 'metadata' not in payment_data:
         raise ValueError('Invalid payment data')
@@ -67,8 +69,7 @@ def validate_webhook_data(webhook_data: dict) -> dict:
 
 def start_new_rental(user_id: int) -> list:
     """
-    В случае успешной оплаты у пользователя создаются
-    объекты аренды, а корзина очищается
+    Create rental objects for the user upon successful payment and clear the user's cart.
     """
     cart_equipment = Cart.objects.filter(user_id=user_id)
 
@@ -99,7 +100,7 @@ def start_new_rental(user_id: int) -> list:
 
 
 def create_new_rental_info(user_id: int, payment_data: dict, idempotence_key: str) -> int:
-    """Запись информации об успешном платеже"""
+    """ Write information about a successful payment to the database."""
     paid_amount = payment_data['amount']['value']
     payment = UserPaymentDetails.objects.create(
         user_id=user_id,
@@ -115,7 +116,7 @@ def create_new_rental_info(user_id: int, payment_data: dict, idempotence_key: st
 
 
 def send_email_success_payment(new_rental_detail: list, total_paid_sum: int, user_id: int) -> None:
-    """Отправка письма на почту при успешной оплате"""
+    """Send an email notification for a successful payment."""
     message = 'Оплата прошла успешно. Спасибо, что воспользовались нашим прокатом.\n\n' \
               f"Детали заказа: \n {get_payment_details_string(new_rental_detail)}\n\n" \
               f"Итоговая сумма: {total_paid_sum} рублей"

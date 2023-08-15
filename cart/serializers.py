@@ -1,4 +1,5 @@
 from datetime import date
+from typing import Dict
 
 from rest_framework import serializers
 
@@ -7,7 +8,6 @@ from equipment.models import Equipment
 
 
 class CartEquipmentSerializer(serializers.ModelSerializer):
-    """Поле equipment сериализатора CartSerializer"""
     price = serializers.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
@@ -24,10 +24,10 @@ class CartSerializer(serializers.ModelSerializer):
         model = Cart
         fields = ['id', 'equipment', 'amount', 'summ', 'dates']
 
-    def get_summ(self, obj):
+    def get_summ(self, obj) -> int:
         return obj.amount * obj.equipment.price
 
-    def get_dates(self, obj):
+    def get_dates(self, obj) -> Dict[str, str]:
         return {'date_start': obj.date_start, 'date_end': obj.date_end}
 
 

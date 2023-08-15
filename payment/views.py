@@ -1,32 +1,36 @@
 from django.urls import reverse
 from django.shortcuts import redirect
+from drf_spectacular.utils import extend_schema
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 
+from services.payment.decorator_kwargs import CHECK_CART_DECORATOR_KWARGS, COMPOSE_PAYMENT_DECORATOR_KWARGS, \
+    PAYMENT_STATUS_DECORATOR_KWARGS
 from .serializers import PaymentSerializer, PaymentStatusSerializer
 from services.payment.check_cart_before_payment import availability_check
 from services.payment.payment_preparations import get_confirmation_url
 from services.payment.payment_status import get_payment_status
 from services.payment.received_payment_operations import create_new_payment
 from services.payment.exceptions import UnavailableCartItemsException, NotRelevantCartException, \
-                                                                       InvalidKeyPaymentException
+    InvalidKeyPaymentException
 
 
 class CartCheckViewSet(viewsets.ModelViewSet):
     """
-    Проверка корзины перед покупкой.
-    Сначала проверка на пустую корзину, затем на превышение количества
-    и неактуальную дату(позже, чем сегодня).
-    Проверка: сравнивается количество снаряжения всего минус количество
-     сняряжения в аренде с количеством в корзине на указанную дату.
-    Если в корзине больше, чем свободно, то возвращается сообщение об ошибке,
-    если все ок - идет перенаправление на оплату
-    """
+        Check the cart before making a purchase.
+        The cart is checked for emptiness first, then for exceeding the quantity and
+         outdated dates (later than today).
+        Check: Compares the total equipment quantity minus the rented equipment
+         quantity with the cart quantity on the specified date.
+        If there's more in the cart than available, an error message is returned;
+         if everything is okay, redirection to payment occurs.
+        """
     permission_classes = [IsAuthenticated, ]
 
+    @extend_schema(**CHECK_CART_DECORATOR_KWARGS)
     def list(self, request, *args, **kwargs):
         try:
             availability_check(request)
@@ -36,15 +40,15 @@ class CartCheckViewSet(viewsets.ModelViewSet):
                 'params': e.params
             }
             return Response(error_details, status=e.status_code)
-
         return redirect(reverse('payment'))
 
 
 class PaymentApiView(APIView):
-    """Формирование запроса на оплату и отправка запроса Юкассе"""
+    """Compose a payment request and forward it to YooKassa."""
     serializer_class = PaymentSerializer
     permission_classes = [IsAuthenticated, ]
 
+    @extend_schema(**COMPOSE_PAYMENT_DECORATOR_KWARGS)
     def post(self, request, *args, **kwargs):
         serializer = PaymentSerializer(data=request.data)
 
@@ -61,7 +65,11 @@ class PaymentApiView(APIView):
 
 
 class YookassaResponseApiView(APIView):
-    """Получение и обработка вебхука от Юкассы"""
+    """
+    Handle and process webhooks from YooKassa.
+    This endpoint is not utilized in the frontend.
+    """
+
     def post(self, response):
         webhook_data = response.data
 
@@ -74,16 +82,18 @@ class YookassaResponseApiView(APIView):
 
 
 class PaymentStatusApiView(APIView):
-    """Представление для получения статуса оплаты"""
+    """Retrieve payment status."""
     serializer_class = PaymentStatusSerializer
     permission_classes = [IsAuthenticated, ]
 
+    @extend_schema(**PAYMENT_STATUS_DECORATOR_KWARGS)
     def post(self, request):
         idempotence_key = request.data['idempotence_key']
 
         try:
             payment_status = get_payment_status(idempotence_key)
         except InvalidKeyPaymentException as e:
-            return Response(e.message, status=e.status_code)
+            message = {"Error": e.message}
+            return Response(message, status=e.status_code)
 
         return Response(payment_status, status=status.HTTP_200_OK)
