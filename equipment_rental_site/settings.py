@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'djoser',
     'django_extensions',
-    'drf_yasg',
     'drf_spectacular',
 
     'equipment',
@@ -89,16 +88,10 @@ WSGI_APPLICATION = 'equipment_rental_site.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # docker version!
-        # 'HOST': os.environ.get('DB_HOST'),
-        # 'NAME': os.environ.get('POSTGRES_DB'),
-        # 'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-        # 'USER': os.environ.get('POSTGRES_USER'),
-        'NAME': 'equipment_db',
-        'USER': 'postgres',
-        'PASSWORD': '1234',
-        'HOST': '127.0.0.1',
-        'PORT': '5432'
+        'HOST': os.environ.get('DB_HOST'),
+        'NAME': os.environ.get('POSTGRES_DB'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'USER': os.environ.get('POSTGRES_USER'),
     }
 }
 
@@ -146,18 +139,18 @@ YOOKASSA_SECRET_KEY = os.getenv('YOOKASSA_SECRET_KEY')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# LOGGING = {
-#     'version': 1,
-#     'handlers': {
-#         'console': {'class': 'logging.StreamHandler'}
-#     },
-#     'loggers': {
-#         'django.db.backends': {
-#             'handlers': ['console'],
-#             'level': 'DEBUG'
-#         }
-#     }
-# }
+LOGGING = {
+    'version': 1,
+    'handlers': {
+        'console': {'class': 'logging.StreamHandler'}
+    },
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'DEBUG'
+        }
+    }
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -181,9 +174,8 @@ DJOSER = {
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# for docker!!
-# EMAIL_HOST = 'smtp-server'
-EMAIL_HOST = 'localhost'
+
+EMAIL_HOST = 'smtp-server'
 EMAIL_PORT = 1025
 
 AUTH_USER_MODEL = 'users.CustomUser'
@@ -191,18 +183,10 @@ AUTH_USER_MODEL = 'users.CustomUser'
 CELERY_BROKER_URL = "redis://redis:6379/0"
 CELERY_RESULT_BACKEND = "redis://redis:6379/0"
 
-# docker version!
-# CACHES = {
-#     "default": {
-#         "BACKEND": "django_redis.cache.RedisCache",
-#         "LOCATION": "redis://redis:6379/1",
-#     }
-# }
-
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379",
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6379/1",
     }
 }
 
