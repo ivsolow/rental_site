@@ -8,7 +8,7 @@ from users.models import CustomUser
 
 
 def get_confirmation_url(user: CustomUser, payment_sum: int, commission: float) -> dict:
-    """Получение ссылки на оплату"""
+    """Receiving payment link from Yookassa"""
     Configuration.account_id = settings.YOOKASSA_ACCOUNT_ID
     Configuration.secret_key = settings.YOOKASSA_SECRET_KEY
     user_id = user.id
@@ -52,7 +52,7 @@ def get_confirmation_url(user: CustomUser, payment_sum: int, commission: float) 
 def write_data_of_created_payment(user_id: int,
                                   idempotence_key: str,
                                   value_with_commission: float) -> None:
-    """Запись данных о сформированном платеже в новую или существующую таблицу"""
+    """ Write data about the created payment into a new or existing table."""
 
     create_payment, created = CreatedPayment.objects.get_or_create(
         user_id=user_id,

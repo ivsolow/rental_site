@@ -18,12 +18,13 @@ class CartCheckException(APIException):
 
 class NotRelevantCartException(CartCheckException):
     default_code = 'Invalid dates'
-    message = 'Некоторые даты неактуальны, проверьте корзину'
+    message = 'Some dates are not relevant, please check your cart'
 
 
 class UnavailableCartItemsException(CartCheckException):
     default_code = 'Some equipment is not available'
-    message = 'Снаряжение на некоторые даты уже нет в наличии, проверьте корзину'
+    message = ('Some equipment is no longer available for certain dates.'
+               ' Please review the contents of your cart."')
 
 
 class EmptyCartException(CartCheckException):
@@ -32,5 +33,5 @@ class EmptyCartException(CartCheckException):
 
 class InvalidKeyPaymentException(APIException):
     status_code = 400
-    default_detail = 'Invalid key payment'
+    message = 'Invalid key payment'
     default_code = 'invalid_key_payment'

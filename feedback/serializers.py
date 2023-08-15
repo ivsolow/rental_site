@@ -1,14 +1,15 @@
 from rest_framework import serializers
 
 from equipment.models import Equipment
+from equipment.serializers import FeedbackPhotoSerializer
 from feedback.models import Feedback, FeedbackPhoto
 from services.feedback.get_and_create_qurysets import create_feedback_photos, create_feedback_obj
 
 
-class FeedbackPhotoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = FeedbackPhoto
-        fields = ['photo', ]
+# class FeedbackPhotoSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = FeedbackPhoto
+#         fields = ['photo', ]
 
 
 class FeedbackEquipmentSerializer(serializers.ModelSerializer):

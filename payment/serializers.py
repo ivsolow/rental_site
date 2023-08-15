@@ -19,3 +19,4 @@ class PaymentStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = CreatedPayment
         fields = ['idempotence_key', ]
+
