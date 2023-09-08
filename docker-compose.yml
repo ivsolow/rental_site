@@ -25,6 +25,11 @@ services:
     image: postgres:15.1-alpine
     env_file:
       - .env
+#
+#  test-database:
+#    image: postgres:15.1-alpine
+#    env_file:
+#      - .env
 
   redis:
     image: redis:7.0.5-alpine

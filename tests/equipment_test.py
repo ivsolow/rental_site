@@ -170,9 +170,6 @@ def test_cart_availability(equipment_1, equipment_2, api_client, user):
     # наличие в указанные даты
     get_url_1 = reverse('free_equipment') + f'?date_start={today}&date_end={today + delta}'
     response = api_client.get(get_url_1)
-    print(response.data)
-    # print(response.data[0])
-    # print(first_buy)
     assert len(response.data) == 2
     assert response.data[0]['available_amount'] == 5
     assert response.data[1]['available_amount'] == 8

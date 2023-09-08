@@ -71,3 +71,4 @@ class AvailableEquipmentViewSet(viewsets.ViewSet):
         equipment_serializer = AvailableEquipmentSerializer(equipment, many=True)
 
         return Response(equipment_serializer.data)
+

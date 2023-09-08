@@ -25,7 +25,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.5', '127.0.0.1']
 
 # Application definition
 
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'djoser',
     'django_extensions',
     'drf_spectacular',
+    'corsheaders',
 
     'equipment',
     'cart',
@@ -53,12 +54,12 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
 ]
 
 ROOT_URLCONF = 'equipment_rental_site.urls'
@@ -85,13 +86,39 @@ WSGI_APPLICATION = 'equipment_rental_site.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'HOST': os.environ.get('DB_HOST'),
+#         'NAME': os.environ.get('POSTGRES_DB'),
+#         'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+#         'USER': os.environ.get('POSTGRES_USER'),
+#     },
+
+# 'test': {
+#     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#     'HOST': os.environ.get('DB_HOST'),
+#     'NAME': os.environ.get('TEST_POSTGRES_DB'),
+#     'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+#     'USER': os.environ.get('POSTGRES_USER'),
+# }
+# }
+
+# DATABASES['test'] = {
+#     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#     'HOST': os.environ.get('DB_HOST'),
+#     'NAME': os.environ.get('TEST_POSTGRES_DB'),  # Название тестовой базы данных
+#     'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+#     'USER': os.environ.get('POSTGRES_USER'),
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': os.environ.get('DB_HOST'),
-        'NAME': os.environ.get('POSTGRES_DB'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-        'USER': os.environ.get('POSTGRES_USER'),
+        'HOST': 'localhost',
+        'NAME': 'equipment_db',
+        'PASSWORD': 1234,
+        'USER': 'postgres',
     }
 }
 
@@ -130,6 +157,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 YOOKASSA_ACCOUNT_ID = os.getenv('YOOKASSA_ACCOUNT_ID')
 YOOKASSA_SECRET_KEY = os.getenv('YOOKASSA_SECRET_KEY')
@@ -148,8 +176,13 @@ LOGGING = {
         'django.db.backends': {
             'handlers': ['console'],
             'level': 'DEBUG'
+        },
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
         }
     }
+
 }
 
 REST_FRAMEWORK = {
@@ -166,7 +199,7 @@ DJOSER = {
     'SITE_NAME': 'Frontend',
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
-    'SEND_ACTIVATION_EMAIL': True,
+    'SEND_ACTIVATION_EMAIL': False,
     'PASSWORD_VALIDATORS': [],
     'SERIALIZERS': {
         'user_create': 'users.serializers.UserRegistrationSerializer',
@@ -180,16 +213,25 @@ EMAIL_PORT = 1025
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
-CELERY_BROKER_URL = "redis://redis:6379/0"
-CELERY_RESULT_BACKEND = "redis://redis:6379/0"
+# CELERY_BROKER_URL = "redis://redis:6379/0"
+# CELERY_RESULT_BACKEND = "redis://redis:6379/0"
+#
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": "redis://redis:6379/1",
+#     }
+# }
+
+CELERY_BROKER_URL = "redis://localhost:6379/0"
+CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
 
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://redis:6379/1",
+        "LOCATION": "redis://localhost:6379/1",
     }
 }
-
 
 EQUIPMENT_LIST_CACHE_KEY = 'equipment_list'
 EQUIPMENT_RETRIEVE_CACHE_KEY = 'equipment_retrieve'
@@ -198,3 +240,32 @@ AVAIL_EQUIPMENT_DATES = 'equipment_dates'
 CART_LIST_CACHE_KEY = 'cart_list'
 RENTALS_CACHE_KEY = 'rentals_list'
 
+CORS_ORIGIN_ALLOW_ALL = True
+
+# REGISTRATION_ENABLED = True
+# REGISTRATION_EMAIL_CONFIRM = False
+# ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+# CORS_ALLOW_HEADERS = True
+# CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_CREDENTIALS = True
+
+# CORS_ORIGIN_WHITELIST = (
+#        'localhost:3000',
+#         # 'localhost:3000/equipment/3/'
+# )
+
+#
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+# ]
+
+# CORS_ALLOW_METHODS = [
+#     # Добавьте методы, которые разрешены для запросов
+#     'DELETE',
+#     'GET',
+#     'OPTIONS',
+#     'PATCH',
+#     'POST',
+#     'PUT',
+# ]

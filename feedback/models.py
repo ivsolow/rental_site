@@ -27,7 +27,7 @@ class Feedback(models.Model):
         cache.delete(settings.EQUIPMENT_RETRIEVE_CACHE_KEY)
 
     def __str__(self):
-        return f'{self.user.email} about {self.equipment.name}'
+        return f"{self.user.email} about {self.equipment.name}"
 
 
 class FeedbackPhoto(models.Model):
@@ -35,4 +35,6 @@ class FeedbackPhoto(models.Model):
     photo = models.ImageField(upload_to=upload_path)
 
     def __str__(self):
-        return f"{self.feedback.user.email} about {self.feedback.equipment.name}"
+        if not self:
+            return 'Deleted user'
+        return f'{self.feedback.user.email} about {self.feedback.equipment.name}'
