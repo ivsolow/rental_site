@@ -7,7 +7,7 @@ function EquipmentDetail() {
   const [equipment, setEquipment] = useState({});
 
   useEffect(() => {
-    fetch(`http://127.0.0.5/api/v1/equipment/${id}`)
+    fetch(`http://0.0.0.0:1337/api/v1/equipment/${id}`)
       .then(response => response.json())
       .then(data => {
         setEquipment(data);
@@ -36,7 +36,7 @@ function EquipmentDetail() {
       <div className="review-item">
         {review.feedback_photos.length > 0 && (
           <img
-            src={`http://127.0.0.5${review.feedback_photos[0].photo}`}
+            src={`http://0.0.0.0:1337${review.feedback_photos[0].photo}`}
             alt={`Photo by ${review.username}`}
             width="200"
           />

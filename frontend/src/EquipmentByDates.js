@@ -70,24 +70,9 @@ function EquipmentByDates() {
       return;
     }
 
-    // Выполнение GET-запроса к API для получения снаряжения по датам
-  //   try {
-  //     const response = await fetch(`http://127.0.0.5/api/v1/equipment_dates/?date_end=${endDate}&date_start=${startDate}`);
-  //     if (response.ok) {
-  //       const data = await response.json();
-  //       setEquipmentData(data);
-  //       setError(null);
-  //     } else {
-  //       setError('An error occurred while fetching equipment data.');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching equipment data:', error);
-  //     setError('An error occurred while fetching equipment data.');
-  //   }
-  // };
 
   try {
-    const response = await fetch(`http://127.0.0.5/api/v1/equipment_dates/?date_end=${endDate}&date_start=${startDate}`);
+    const response = await fetch(`http://0.0.0.0:1337/api/v1/equipment_dates/?date_end=${endDate}&date_start=${startDate}`);
     if (response.ok) {
       const data = await response.json();
       setEquipmentData(data);
@@ -104,6 +89,7 @@ function EquipmentByDates() {
     console.error('Error fetching equipment data:', error);
     setError('An error occurred while fetching equipment data.');
   }
+
 };
   
 
@@ -122,7 +108,7 @@ function EquipmentByDates() {
       };
 
       // Отправка данных на сервер
-      fetch('http://127.0.0.5/api/v1/add_cart/', {
+      fetch('http://0.0.0.0:1337/api/v1/add_cart/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -178,7 +164,7 @@ function EquipmentByDates() {
                   {equipmentItem.photos.map((photo, index) => (
                     <img
                       key={index}
-                      src={'http://127.0.0.5' + photo.photo}
+                      src={'http://0.0.0.0:1337' + photo.photo}
                       alt={`Equipment ${equipmentItem.name}`}
                       style={{ maxWidth: '200px', maxHeight: '200px' }}
                     />

@@ -19,15 +19,11 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = int(os.getenv("DEBUG", default=0))
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.5', '127.0.0.1']
-
-# Application definition
+ALLOWED_HOSTS = ['*'] # ['0.0.0.0', 'localhost', '127.0.0.5', '127.0.0.1', '127.0.0.0']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -86,41 +82,26 @@ WSGI_APPLICATION = 'equipment_rental_site.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'HOST': os.environ.get('DB_HOST'),
-#         'NAME': os.environ.get('POSTGRES_DB'),
-#         'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-#         'USER': os.environ.get('POSTGRES_USER'),
-#     },
-
-# 'test': {
-#     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#     'HOST': os.environ.get('DB_HOST'),
-#     'NAME': os.environ.get('TEST_POSTGRES_DB'),
-#     'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-#     'USER': os.environ.get('POSTGRES_USER'),
-# }
-# }
-
-# DATABASES['test'] = {
-#     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#     'HOST': os.environ.get('DB_HOST'),
-#     'NAME': os.environ.get('TEST_POSTGRES_DB'),  # Название тестовой базы данных
-#     'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-#     'USER': os.environ.get('POSTGRES_USER'),
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': 'localhost',
-        'NAME': 'equipment_db',
-        'PASSWORD': 1234,
-        'USER': 'postgres',
-    }
+        'HOST': os.environ.get('DB_HOST'),
+        'NAME': os.environ.get('POSTGRES_DB'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'USER': os.environ.get('POSTGRES_USER'),
+    },
 }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'HOST': 'localhost',
+#         'NAME': 'equipment_db',
+#         'PASSWORD': 1234,
+#         'USER': 'postgres',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -213,25 +194,25 @@ EMAIL_PORT = 1025
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
-# CELERY_BROKER_URL = "redis://redis:6379/0"
-# CELERY_RESULT_BACKEND = "redis://redis:6379/0"
-#
-# CACHES = {
-#     "default": {
-#         "BACKEND": "django_redis.cache.RedisCache",
-#         "LOCATION": "redis://redis:6379/1",
-#     }
-# }
-
-CELERY_BROKER_URL = "redis://localhost:6379/0"
-CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+CELERY_BROKER_URL = "redis://redis:6379/0"
+CELERY_RESULT_BACKEND = "redis://redis:6379/0"
 
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://localhost:6379/1",
+        "LOCATION": "redis://redis:6379/1",
     }
 }
+
+# CELERY_BROKER_URL = "redis://localhost:6379/0"
+# CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+#
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": "redis://localhost:6379/1",
+#     }
+# }
 
 EQUIPMENT_LIST_CACHE_KEY = 'equipment_list'
 EQUIPMENT_RETRIEVE_CACHE_KEY = 'equipment_retrieve'
@@ -242,6 +223,7 @@ RENTALS_CACHE_KEY = 'rentals_list'
 
 CORS_ORIGIN_ALLOW_ALL = True
 
+CSRF_TRUSTED_ORIGINS = ['http://0.0.0.0:1337', ]
 # REGISTRATION_ENABLED = True
 # REGISTRATION_EMAIL_CONFIRM = False
 # ACCOUNT_EMAIL_VERIFICATION = 'none'

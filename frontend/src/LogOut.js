@@ -45,7 +45,7 @@ function Logout() {
     }
 
     // Выполнить запрос на разлогинивание
-    fetch('http://127.0.0.5/auth/token/logout/', {
+    fetch('http://0.0.0.0:1337/auth/token/logout/', {
       method: 'POST',
       headers: {
         Authorization: `Token ${equip_rent_token}`,

@@ -19,7 +19,7 @@ function Cart() {
     }
 
     // Выполнить GET-запрос к эндпоинту корзины пользователя с использованием токена из куки
-    fetch('http://127.0.0.5/api/v1/cart', {
+    fetch('http://0.0.0.0:1337/api/v1/cart', {
       method: 'GET',
       headers: {
         Authorization: `Token ${authToken}`, // Используем токен из куки

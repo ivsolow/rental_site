@@ -11,7 +11,7 @@ class EquipmentList extends Component {
 
   componentDidMount() {
     // Загрузка данных с API и обновление состояния
-    fetch('http://127.0.0.5/api/v1/equipment/')
+    fetch('http://0.0.0.0:1337/api/v1/equipment/')
       .then(response => response.json())
       .then(data => {
         this.setState({ equipmentList: data });
@@ -33,7 +33,7 @@ class EquipmentList extends Component {
               <p>Rating: {item.rating || '-'}</p>
               {item.photos.map((photo, index) => (
                 <Link key={index} to={`/equipment/${item.id}`}>
-                  <img src={`http://127.0.0.5${photo.photo}`} alt={`Equipment ${item.id} - ${index}`} width='500'/>
+                  <img src={`http://0.0.0.0:1337${photo.photo}`} alt={`Equipment ${item.id} - ${index}`} width='500'/>
                 </Link>
               ))}
             </li>

@@ -3,15 +3,13 @@ services:
   web-app:
     build:
       context: .
+      dockerfile: Dockerfile.prod
     container_name: django
-    ports:
-      -  "8000:8000"
-    volumes:
-      - .:/app
+    expose:
+      - 8000
     env_file:
-      - .env
-    command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000"
+      - .env.prod
+    command: gunicorn equipment_rental_site.wsgi:application --bind 0.0.0.0:8000
     depends_on:
       - database
 
@@ -24,8 +22,9 @@ services:
 
   database:
     image: postgres:15.1-alpine
+    container_name: rental_db
     env_file:
-      - .env
+      - .env.prod
 
   redis:
     image: redis:7.0.5-alpine
@@ -44,7 +43,7 @@ services:
       - redis
       - database
     env_file:
-      - .env
+      - .env.prod
 
   flower:
     build:
@@ -68,9 +67,7 @@ services:
     command: npm start
     depends_on:
       - web-app
-    volumes:
-      - ./frontend/public/:/usr/src/app/public/
-      - ./frontend/src/:/usr/src/app/src/
+
 
   nginx:
     build: ./nginx

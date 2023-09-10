@@ -9,16 +9,8 @@ function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Проверяем, есть ли уже у пользователя токен
-    // const equipRentToken = document.cookie.replace(/(?:(?:^|.*;\s*)equip_rent_token\s*=\s*([^;]*).*$)|^.*$/, '$1');
     const authToken = cookie.load('equip_rent_token');
     console.log(authToken)
-
-    // if (!authToken) {
-    //   // Если токен отсутствует, устанавливаем сообщение об ошибке
-    //   setErrorMessage('Please log in to access this resource');
-    //   return;
-    // }
     
     if (authToken) {
       navigate('/');
@@ -29,7 +21,7 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://127.0.0.5/auth/token/login/', {
+      const response = await axios.post('http://0.0.0.0:1337/auth/token/login/', {
         email: email,
         password: password,
       });
