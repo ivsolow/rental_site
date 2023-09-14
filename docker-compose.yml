@@ -3,6 +3,7 @@ services:
   web-app:
     build:
       context: .
+    container_name: django
     ports:
       -  "8000:8000"
     volumes:
@@ -14,12 +15,12 @@ services:
     depends_on:
       - database
 
-  smtp-server:
-    build:
-      context: .
-    volumes:
-      - .:/app
-    command: python smtp-server.py
+  # smtp-server:
+  #   build:
+  #     context: .
+  #   volumes:
+  #     - .:/app
+  #   command: python smtp-server.py
 
   database:
     image: postgres:15.1-alpine
@@ -57,3 +58,27 @@ services:
       - redis
     ports:
       - "5555:5555"
+
+  frontend:
+    build: ./frontend
+    container_name: react
+    restart: always
+    ports:
+      - 3000:3000
+    command: npm start
+    depends_on:
+      - web-app
+    volumes:
+      - ./frontend/public/:/usr/src/app/public/
+      - ./frontend/src/:/usr/src/app/src/
+
+  nginx:
+    build: ./nginx
+    ports:
+      - 1337:80
+    depends_on:
+      - frontend
+      - web-app
+    volumes:
+      - ./static:/home/src/app/static/
+      - ./media:/home/src/app/media/

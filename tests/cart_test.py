@@ -36,7 +36,7 @@ def cart_create_2(user, equipment_2):
     return cart
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 def test_list_cart_items(api_client):
     """
     Проверка полей пустой корзины
@@ -105,6 +105,40 @@ def test_add_cart_different_instances(api_client, cart_create, cart_create_2):
     assert result.data['cart_item_data'][1]['amount'] == 3
 
 
+@pytest.mark.django_db
+def test_add_cart_by_api(api_client, user, equipment_1):
+    """
+    Добавление объектов в корзину через клиента
+    """
+    today = datetime.date.today()
+    delta = datetime.timedelta(days=5)
+    user = user
+    data = {
+        'user': user,
+        'amount': '2',
+        'equipment': equipment_1.id,
+        'date_start': today,
+        'date_end': today + delta
+    }
+
+    post_url = reverse('add_cart')
+    result = api_client.post(post_url, data)
+    assert result.status_code == 201
+    assert result.data['amount'] == '2'
+    assert result.data['equipment'] == equipment_1.id
+    assert result.data['date_start'] == str(today)
+    assert result.data['date_end'] == str(today + delta)
+
+    post_url = reverse('add_cart')
+    result = api_client.post(post_url, data)
+    cart_response = {
+        "status": "Cart updated successfully",
+        "equipment": equipment_1.name,
+        "amount": '2'
+    }
+
+    assert result.data == cart_response
+
 
 @pytest.mark.django_db
 def test_delete_cart_items(cart_create, api_client):
@@ -132,8 +166,9 @@ def test_delete_cart_object(cart_create, api_client):
     url = reverse('cart_delete', kwargs={'pk': pk, 'amount': 3})
     delete_response = api_client.delete(url)
     # ответ сервера после удаления
+    delete_message = messge = {"response": "Cart object deleted successfully"}
     assert delete_response.status_code == 200
-    assert delete_response.data == 'Cart object deleted successfully'
+    assert delete_response.data == delete_message
     get_response = api_client.get(get_url)
     # количество после удаления
     assert len(get_response.data['cart_item_data']) == 0

@@ -51,7 +51,6 @@ class CartViewSet(viewsets.ViewSet):
         serializer.is_valid(raise_exception=True)
         cart_fields = serializer.validated_data
         user = request.user
-        print(cart_fields)
         cache.delete(settings.CART_LIST_CACHE_KEY)
 
         cart = is_cart_exists(cart_fields)

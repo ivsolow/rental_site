@@ -25,7 +25,7 @@ class EquipmentFeedbackSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Feedback
-        fields = ('username', 'content', 'rate', 'feedback_photos')
+        fields = ('id', 'username', 'content', 'rate', 'feedback_photos')
 
     def get_username(self, obj) -> str:
         name = obj.user.first_name

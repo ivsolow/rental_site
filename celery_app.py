@@ -11,7 +11,3 @@ app.conf.broker_url = settings.CELERY_BROKER_URL
 app.autodiscover_tasks()
 
 
-@app.task()
-def test_task():
-    time.sleep(20)
-    print('hello from test task!!!')

@@ -1,0 +1,14 @@
+.body {
+  margin: 20px;
+}
+
+.reviews-list {
+/*  list-style: none;*/
+  padding: 40px;
+/*  margin: 20px;*/
+}
+
+.review-item {
+  margin-bottom: 50px; /* Добавьте нужный отступ между элементами отзывов */
+}
+
