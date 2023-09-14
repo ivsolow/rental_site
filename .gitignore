@@ -15,3 +15,4 @@ test_test.py
 celerybeat-schedule.db
 celery.log
 123.py
+.env.prod
