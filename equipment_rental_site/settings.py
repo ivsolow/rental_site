@@ -163,7 +163,6 @@ LOGGING = {
             'level': 'DEBUG',
         }
     }
-
 }
 
 REST_FRAMEWORK = {
@@ -221,9 +220,9 @@ AVAIL_EQUIPMENT_DATES = 'equipment_dates'
 CART_LIST_CACHE_KEY = 'cart_list'
 RENTALS_CACHE_KEY = 'rentals_list'
 
-CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_ALLOW_ALL = True
 
-CSRF_TRUSTED_ORIGINS = ['http://0.0.0.0:1337', ]
+# CSRF_TRUSTED_ORIGINS = ['http://0.0.0.0:1337', ]
 # REGISTRATION_ENABLED = True
 # REGISTRATION_EMAIL_CONFIRM = False
 # ACCOUNT_EMAIL_VERIFICATION = 'none'
@@ -238,9 +237,9 @@ CSRF_TRUSTED_ORIGINS = ['http://0.0.0.0:1337', ]
 # )
 
 #
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",
-# ]
+CORS_ALLOWED_ORIGINS = [
+    "http://0.0.0.0:3000/",
+]
 
 # CORS_ALLOW_METHODS = [
 #     # Добавьте методы, которые разрешены для запросов
