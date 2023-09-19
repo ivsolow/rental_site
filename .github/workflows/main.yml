@@ -19,7 +19,7 @@ jobs:
 
     - name: Set up Docker Compose
       run: |
-        echo "$RENTAL_PROD_ENV" > .env.prod
+        echo "$RENTAL_PROD_ENV" > .env
         docker-compose up -d
 
     - name: Wait for Django to start
