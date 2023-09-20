@@ -49,7 +49,7 @@ jobs:
         max_attempts=5
         attempts=0
         
-        until docker logs django | grep "Starting gunicorn" || [ $attempts -eq $max_attempts ]; do
+        until docker logs django | grep "Creating django" || [ $attempts -eq $max_attempts ]; do
           echo "Waiting for Django to start..."
           sleep 5
           attempts=$((attempts + 1))
