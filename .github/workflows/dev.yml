@@ -1,0 +1,51 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 30
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Compose
+      run: |
+        echo "$RENTAL_PROD_ENV" > .env.prod
+
+    - name: Debug secret
+      run: |
+        echo "Secret value: $RENTAL_PROD_ENV"
+
+    - name: run containers
+      run: docker-compose -f docker-compose.prod.yml up --build
+        
+    - name: Wait for Django to start
+      run: |
+        until docker logs -f django | grep "Starting gunicorn"; do
+          echo "Waiting for Django to start..."
+          sleep 5
+        done
+
+    - name: Run Tests
+      run: |
+        if docker exec -it django sh -c "pytest"; then
+          echo "Tests passed successfully"
+        else
+          echo "Tests failed"
+          exit 1
+        fi
+
+    - name: Stop containers
+      run: |
+        docker-compose down
