@@ -10,11 +10,8 @@ on:
       - main
       - dev
 jobs:
-  deploy:
+  run_containers:
     runs-on: ubuntu-latest
-
-    timeout-minutes: 30
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -39,13 +36,26 @@ jobs:
 
     - name: run containers
       run: docker-compose -f docker-compose.prod.yml up --build
-        
+
+  run_tests:
+    runs-on: ubuntu-latest
+    needs: run_containers
+    steps:
     - name: Wait for Django to start
       run: |
-        until docker logs -f django | grep "Starting gunicorn"; do
+        max_attempts=10  # Максимальное количество попыток
+        attempts=0
+        
+        until docker logs django | grep "Starting gunicorn" || [ $attempts -eq $max_attempts ]; do
           echo "Waiting for Django to start..."
           sleep 5
+          attempts=$((attempts + 1))
         done
+        
+        if [ $attempts -eq $max_attempts ]; then
+          echo "Django did not start after $max_attempts attempts."
+          exit 1
+        fi
 
     - name: Run Tests
       run: |
@@ -56,7 +66,4 @@ jobs:
           exit 1
         fi
 
-    - name: Stop containers
-      run: |
-        docker-compose down
 
