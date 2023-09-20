@@ -19,7 +19,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    - name: Set up Docker Compose
+      run: |
+        echo "$RENTAL_PROD_ENV" > .env.prod
 
+    - name: Debug secret
+      run: |
+        echo "Secret value: $RENTAL_PROD_ENV"
 
     - name: run containers
       run: docker-compose -f docker-compose.prod.yml up --build
