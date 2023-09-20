@@ -21,11 +21,21 @@ jobs:
 
     - name: Set up Docker Compose
       run: |
-        echo "$RENTAL_PROD_ENV" > .env.prod
+        echo SECRET_KEY=${{ secrets.SECRET_KEY }} > .env.prod
+        echo YOOKASSA_ACCOUNT_ID=${{ secrets.YOOKASSA_ACCOUNT_ID }} >> .env.prod
+        echo YOOKASSA_SECRET_KEY=${{ secrets.YOOKASSA_SECRET_KEY }} >> .env.prod
+        echo DB_HOST=${{ secrets.DB_HOST }} >> .env.prod
+        echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env.prod
+        echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env.prod
+        echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env.prod
+        echo CORS_BACKEND_ADDRESS=${{ secrets.CORS_BACKEND_ADDRESS }} >> .env.prod
+        echo BACKEND_SERVER_IP=${{ secrets.BACKEND_SERVER_IP }} >> .env.prod
+        echo BACKEND_SERVER_PORT=${{ secrets.BACKEND_SERVER_PORT }} >> .env.prod
+        echo DJANGO_SETTINGS_MODULE=${{ secrets.DJANGO_SETTINGS_MODULE }} >> .env.prod
 
-    - name: Debug secret
+    - name: Debug env
       run: |
-        echo "Secret value: $RENTAL_PROD_ENV"
+        cat .env.prod
 
     - name: run containers
       run: docker-compose -f docker-compose.prod.yml up --build
