@@ -65,10 +65,24 @@ jobs:
           sleep 2
           attempts=$((attempts + 1))
         done
+        
+    - name: Sleep for 5 seconds
+      run: sleep 5
+      
+    - name: makemigrations
+      run: docker exec django sh -c "python manage.py makemigrations"
 
+    - name: Sleep for 5 seconds
+      run: sleep 5
+
+    - name: migrate
+      run: docker exec django sh -c "python manage.py migrate"
+
+    - name: Sleep for 5 seconds
+      run: sleep 5
+        
     - name: Run Tests
       run: |
-        docker logs rental_db
         if docker exec django sh -c "pytest"; then
           echo "Tests passed successfully"
         else
