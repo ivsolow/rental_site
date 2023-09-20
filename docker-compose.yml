@@ -75,9 +75,8 @@ services:
   nginx:
     build: ./nginx
     ports:
-      - 1337:80
+      - 80:80
     depends_on:
-      - frontend
       - web-app
     volumes:
       - ./static:/home/src/app/static/

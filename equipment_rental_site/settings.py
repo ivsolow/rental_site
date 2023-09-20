@@ -220,7 +220,6 @@ AVAIL_EQUIPMENT_DATES = 'equipment_dates'
 CART_LIST_CACHE_KEY = 'cart_list'
 RENTALS_CACHE_KEY = 'rentals_list'
 
-# CORS_ORIGIN_ALLOW_ALL = True
 
 # CSRF_TRUSTED_ORIGINS = ['http://0.0.0.0:1337', ]
 # REGISTRATION_ENABLED = True
@@ -228,6 +227,7 @@ RENTALS_CACHE_KEY = 'rentals_list'
 # ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 # CORS_ALLOW_HEADERS = True
+# CORS_ORIGIN_ALLOW_ALL = True
 # CORS_ALLOW_ALL_ORIGINS = True
 # CORS_ALLOW_CREDENTIALS = True
 
@@ -236,9 +236,10 @@ RENTALS_CACHE_KEY = 'rentals_list'
 #         # 'localhost:3000/equipment/3/'
 # )
 
-#
+
+CORS_BACKEND_ADDRESS = os.getenv('CORS_BACKEND_ADDRESS')
 CORS_ALLOWED_ORIGINS = [
-    "http://0.0.0.0:3000/",
+    CORS_BACKEND_ADDRESS,
 ]
 
 # CORS_ALLOW_METHODS = [

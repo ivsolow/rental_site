@@ -6,5 +6,5 @@ RUN apk add postgresql-client build-base postgresql-dev
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 ENV PYTHONUNBUFFERED=1
-RUN adduser --disabled-password rental
-USER rental
+RUN chown -R 1000:1000 /app
+USER 1000:1000

@@ -60,6 +60,9 @@ function EquipmentByDates() {
   const [error, setError] = useState(null);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [notification, setNotification] = useState(null);
+  const ipAddress = process.env.BACKEND_SERVER_IP || '0.0.0.0';
+  const port = process.env.BACKEND_SERVER_PORT || '1337';
+  const serverAddress = `http://${ipAddress}:${port}`;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -70,9 +73,8 @@ function EquipmentByDates() {
       return;
     }
 
-
   try {
-    const response = await fetch(`http://0.0.0.0:1337/api/v1/equipment_dates/?date_end=${endDate}&date_start=${startDate}`);
+    const response = await fetch(`${serverAddress}/api/v1/equipment_dates/?date_end=${endDate}&date_start=${startDate}`);
     if (response.ok) {
       const data = await response.json();
       setEquipmentData(data);
@@ -108,7 +110,7 @@ function EquipmentByDates() {
       };
 
       // Отправка данных на сервер
-      fetch('http://0.0.0.0:1337/api/v1/add_cart/', {
+      fetch(`${serverAddress}/api/v1/add_cart/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -164,7 +166,7 @@ function EquipmentByDates() {
                   {equipmentItem.photos.map((photo, index) => (
                     <img
                       key={index}
-                      src={'http://0.0.0.0:1337' + photo.photo}
+                      src={`${serverAddress}${photo.photo}`}
                       alt={`Equipment ${equipmentItem.name}`}
                       style={{ maxWidth: '200px', maxHeight: '200px' }}
                     />
