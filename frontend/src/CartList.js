@@ -11,6 +11,9 @@ function Cart() {
   useEffect(() => {
     // Получаем токен из куки
     const authToken = cookie.load('equip_rent_token');
+      const ipAddress = process.env.BACKEND_SERVER_IP || '0.0.0.0';
+      const port = process.env.BACKEND_SERVER_PORT || '1337';
+      const serverAddress = `http://${ipAddress}:${port}`;
 
     if (!authToken) {
       // Если токен отсутствует, устанавливаем сообщение об ошибке
@@ -19,7 +22,7 @@ function Cart() {
     }
 
     // Выполнить GET-запрос к эндпоинту корзины пользователя с использованием токена из куки
-    fetch('http://0.0.0.0:1337/api/v1/cart', {
+    fetch(`${serverAddress}/api/v1/cart`, {
       method: 'GET',
       headers: {
         Authorization: `Token ${authToken}`, // Используем токен из куки

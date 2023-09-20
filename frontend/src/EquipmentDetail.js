@@ -5,9 +5,12 @@ import './custom_styles.css';
 function EquipmentDetail() {
   const { id } = useParams();
   const [equipment, setEquipment] = useState({});
+  const ipAddress = process.env.BACKEND_SERVER_IP || '0.0.0.0';
+  const port = process.env.BACKEND_SERVER_PORT || '1337';
+  const serverAddress = `http://${ipAddress}:${port}`;
 
   useEffect(() => {
-    fetch(`http://0.0.0.0:1337/api/v1/equipment/${id}`)
+    fetch(`${serverAddress}/api/v1/equipment/${id}`)
       .then(response => response.json())
       .then(data => {
         setEquipment(data);
@@ -36,7 +39,7 @@ function EquipmentDetail() {
       <div className="review-item">
         {review.feedback_photos.length > 0 && (
           <img
-            src={`http://0.0.0.0:1337${review.feedback_photos[0].photo}`}
+            src={`${serverAddress}${review.feedback_photos[0].photo}`}
             alt={`Photo by ${review.username}`}
             width="200"
           />

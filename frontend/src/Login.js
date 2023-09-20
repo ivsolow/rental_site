@@ -7,6 +7,9 @@ function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const ipAddress = process.env.BACKEND_SERVER_IP || '0.0.0.0';
+  const port = process.env.BACKEND_SERVER_PORT || '1337';
+  const serverAddress = `http://${ipAddress}:${port}`;
 
   useEffect(() => {
     const authToken = cookie.load('equip_rent_token');
@@ -21,7 +24,7 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://0.0.0.0:1337/auth/token/login/', {
+      const response = await axios.post(`${serverAddress}/auth/token/login/`, {
         email: email,
         password: password,
       });

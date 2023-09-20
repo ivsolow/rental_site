@@ -7,11 +7,15 @@ class EquipmentList extends Component {
     this.state = {
       equipmentList: [], // Список снаряжения
     };
+    this.serverAddress = `http://${process.env.BACKEND_SERVER_IP || '0.0.0.0'}:${
+  process.env.BACKEND_SERVER_PORT || '1337'}`;
   }
 
   componentDidMount() {
-    // Загрузка данных с API и обновление состояния
-    fetch('http://0.0.0.0:1337/api/v1/equipment/')
+      const ipAddress = process.env.BACKEND_SERVER_IP || '0.0.0.0';
+      const port = process.env.BACKEND_SERVER_PORT || '1337';
+      const serverAddress = `http://${ipAddress}:${port}`;
+    fetch(`${this.serverAddress}/api/v1/equipment/`)
       .then(response => response.json())
       .then(data => {
         this.setState({ equipmentList: data });
@@ -33,7 +37,7 @@ class EquipmentList extends Component {
               <p>Rating: {item.rating || '-'}</p>
               {item.photos.map((photo, index) => (
                 <Link key={index} to={`/equipment/${item.id}`}>
-                  <img src={`http://0.0.0.0:1337${photo.photo}`} alt={`Equipment ${item.id} - ${index}`} width='500'/>
+                  <img src={`${this.serverAddress}${photo.photo}`} alt={`Equipment ${item.id} - ${index}`} width='500'/>
                 </Link>
               ))}
             </li>
