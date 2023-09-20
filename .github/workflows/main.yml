@@ -43,7 +43,7 @@ jobs:
     steps:
     - name: Wait for Django to start
       run: |
-        max_attempts=10  # Максимальное количество попыток
+        max_attempts=5
         attempts=0
         
         until docker logs django | grep "Starting gunicorn" || [ $attempts -eq $max_attempts ]; do
