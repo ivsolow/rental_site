@@ -38,7 +38,7 @@ jobs:
       run: docker-compose -f docker-compose.ci.yml up --build -d
       
     - name: Sleep for 10 seconds
-      run: sleep 10
+      run: sleep 15
 
     # - name: Wait for Django to start
     #   run: |
@@ -56,9 +56,19 @@ jobs:
     #       exit 1
     #     fi
 
+    - name: Wait for Database to Start
+      run: |
+        max_attempts=3
+        attempts=0
+        until nc -zv rental_db 5432 || [ $attempts -eq $max_attempts ]; do
+          echo "Waiting for the database to start..."
+          sleep 2
+          attempts=$((attempts + 1))
+        done
+
     - name: Run Tests
       run: |
-        sleep 5
+        docker logs rental_db
         if docker exec django sh -c "pytest"; then
           echo "Tests passed successfully"
         else
