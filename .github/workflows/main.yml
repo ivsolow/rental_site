@@ -10,7 +10,7 @@ on:
       - main
       - dev
 jobs:
-  run_containers:
+  run_tests:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -39,23 +39,7 @@ jobs:
       
     - name: Sleep for 10 seconds
       run: sleep 15
-
-    # - name: Wait for Django to start
-    #   run: |
-    #     max_attempts=5
-    #     attempts=0
-        
-    #     until docker logs django | grep "Starting gunicorn" || [ $attempts -eq $max_attempts ]; do
-    #       echo "Waiting for Django to start..."
-    #       sleep 5
-    #       attempts=$((attempts + 1))
-    #     done
-        
-    #     if [ $attempts -eq $max_attempts ]; then
-    #       echo "Django did not start after $max_attempts attempts."
-    #       exit 1
-    #     fi
-
+      
     - name: Wait for Database to Start
       run: |
         max_attempts=3
@@ -90,5 +74,29 @@ jobs:
           exit 1
         fi
 
+  check_pep8:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.10
+
+    - name: Install PEP 8 linter
+      run: pip install flake8
+
+    - name: Run PEP 8 linter
+      run: flake8
+
+    - name: Check PEP 8 results
+      run: |
+        if [ $? -eq 0 ]; then
+          echo "PEP 8 check passed successfully"
+        else
+          echo "PEP 8 check failed"
+          exit 1
+        fi
 
