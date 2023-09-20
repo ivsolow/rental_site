@@ -20,11 +20,11 @@ jobs:
     - name: Set up Docker Compose
       run: |
         echo "$RENTAL_PROD_ENV" > .env
-        docker-compose up -d
+        docker-compose -f docker-compose.prod.yml up --build
 
     - name: Wait for Django to start
       run: |
-        until docker logs -f django | grep "Creating django"; do
+        until docker logs -f django | grep "Starting gunicorn"; do
           echo "Waiting for Django to start..."
           sleep 5
         done
