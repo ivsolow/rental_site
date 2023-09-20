@@ -203,15 +203,6 @@ CACHES = {
     }
 }
 
-# CELERY_BROKER_URL = "redis://localhost:6379/0"
-# CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
-#
-# CACHES = {
-#     "default": {
-#         "BACKEND": "django_redis.cache.RedisCache",
-#         "LOCATION": "redis://localhost:6379/1",
-#     }
-# }
 
 EQUIPMENT_LIST_CACHE_KEY = 'equipment_list'
 EQUIPMENT_RETRIEVE_CACHE_KEY = 'equipment_retrieve'
