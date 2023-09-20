@@ -35,7 +35,7 @@ jobs:
         cat .env.prod
 
     - name: run containers
-      run: docker-compose -f docker-compose.prod.yml up --build
+      run: docker-compose -f docker-compose.ci.yml up --build
 
   run_tests:
     runs-on: ubuntu-latest
