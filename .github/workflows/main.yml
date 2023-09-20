@@ -25,7 +25,7 @@ jobs:
 
     - name: Debug secret
       run: |
-        echo "Secret value: ${{ secrets.RENTAL_PROD_ENV }}"
+        echo "Secret value: $RENTAL_PROD_ENV"
 
     - name: Debug .env.prod
       run: cat .env.prod
