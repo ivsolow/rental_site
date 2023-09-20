@@ -22,7 +22,6 @@ jobs:
     - name: Set up Docker Compose
       run: |
         echo "$RENTAL_PROD_ENV" > .env.prod
-        docker-compose -f docker-compose.prod.yml up --build
 
     - name: Debug secret
       run: |
@@ -31,7 +30,9 @@ jobs:
     - name: Debug .env.prod
       run: cat .env.prod
 
-
+    - name: run containers
+      run: docker-compose -f docker-compose.prod.yml up --build
+        
     - name: Wait for Django to start
       run: |
         until docker logs -f django | grep "Starting gunicorn"; do
