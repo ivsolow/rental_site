@@ -106,22 +106,30 @@ jobs:
     needs: run_tests
 
     steps:
-    # - name: Checkout repository
-    #   uses: actions/checkout@v2
+    - name: Install sshpass
+      run: sudo apt-get install -y sshpass
 
     - name: SSH and deploy
-      uses: appleboy/ssh-action@v1.0.0
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.USER }}
-        password: ${{ secrets.SSH_PASSWORD }}
-        script: |
-          su ivsolow
-          cd ~/rental_site
-          git pull
-          docker-compose -f docker-compose.prod.yml down
-          docker-compose -f docker-compose.prod.yml up -d
-          docker image prune -f
+      run: |
+        sshpass -p ${{ secrets.SSH_PASSWORD }} ssh ${{ secrets.USER }}@${{ secrets.SSH_HOST }} "su ivsolow && cd ~/rental_site && git pull && docker-compose -f docker-compose.prod.yml down && docker-compose -f docker-compose.prod.yml up -d && docker image prune -f"
+    
+    # steps:
+    # # - name: Checkout repository
+    # #   uses: actions/checkout@v2
+
+    # - name: SSH and deploy
+    #   uses: appleboy/ssh-action@v1.0.0
+    #   with:
+    #     host: ${{ secrets.SSH_HOST }}
+    #     username: ${{ secrets.USER }}
+    #     password: ${{ secrets.SSH_PASSWORD }}
+    #     script: |
+    #       su ivsolow
+    #       cd ~/rental_site
+    #       git pull
+    #       docker-compose -f docker-compose.prod.yml down
+    #       docker-compose -f docker-compose.prod.yml up -d
+    #       docker image prune -f
     
     # - name: SSH Login
     #   run: |
