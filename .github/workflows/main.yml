@@ -109,11 +109,26 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Install sshpass
-      run: sudo apt-get install -y sshpass
-
-    - name: SSH Login
-      run: sshpass -p ${{ secrets.SSH_PASSWORD }} ssh ${{ secrets.SSH_LOGIN }}
+    - name: SSH and deploy
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        username: ${{ secrets.SSH_LOGIN }}
+        password: ${{ secrets.SSH_PASSWORD }}
+        script: |
+          su ivsolow
+          cd ~/rental_site
+          git pull
+          docker-compose -f docker-compose.prod.yml down
+          docker-compose -f docker-compose.prod.yml up -d
+          docker image prune -f
+    
+    # - name: SSH Login
+    #   run: |
+    #       echo "$SSH_PRIVATE_KEY" > ssh_key
+    #       chmod 600 ssh_key
+    #       ssh -i ssh_key ivsolow@31.129.104.187
+    #       sshpass -p ${{ secrets.SSH_PASSWORD }} ssh ${{ secrets.SSH_LOGIN }}
+      
 
     - name: Switch to user ivsolow
       run: su ivsolow
