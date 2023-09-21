@@ -106,12 +106,12 @@ jobs:
     needs: run_tests
 
     steps:
-    - name: Install sshpass
-      run: sudo apt-get install -y sshpass
+    # - name: Install sshpass
+    #   run: sudo apt-get install -y sshpass
 
-    - name: SSH and deploy
-      run: |
-        sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd /home/ivsolow/rental_site && git pull && docker-compose -f docker-compose.prod.yml down && docker-compose -f docker-compose.prod.yml up -d && docker image prune -f"
+    # - name: SSH and deploy
+    #   run: |
+    #     sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd /home/ivsolow/rental_site && git pull && docker-compose -f docker-compose.prod.yml down && docker-compose -f docker-compose.prod.yml up -d && docker image prune -f"
 
         # sshpass -p  "echo heeeyy!!"
         # "su ivsolow && cd ~/rental_site && git pull && docker-compose -f docker-compose.prod.yml down && docker-compose -f docker-compose.prod.yml up -d && docker image prune -f"
@@ -121,19 +121,19 @@ jobs:
     # # - name: Checkout repository
     # #   uses: actions/checkout@v2
 
-    # - name: SSH and deploy
-    #   uses: appleboy/ssh-action@v1.0.0
-    #   with:
-    #     host: ${{ secrets.SSH_HOST }}
-    #     username: ${{ secrets.USER }}
-    #     password: ${{ secrets.SSH_PASSWORD }}
-    #     script: |
-    #       su ivsolow
-    #       cd ~/rental_site
-    #       git pull
-    #       docker-compose -f docker-compose.prod.yml down
-    #       docker-compose -f docker-compose.prod.yml up -d
-    #       docker image prune -f
+    - name: SSH and deploy
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.USER }}
+        password: ${{ secrets.SSH_PASSWORD }}
+        script: |
+          su ivsolow
+          cd ~/rental_site
+          git pull
+          docker-compose -f docker-compose.prod.yml down
+          docker-compose -f docker-compose.prod.yml up -d
+          docker image prune -f
     
     # - name: SSH Login
     #   run: |
