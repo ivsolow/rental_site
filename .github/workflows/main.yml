@@ -130,19 +130,19 @@ jobs:
     #       sshpass -p ${{ secrets.SSH_PASSWORD }} ssh ${{ secrets.SSH_LOGIN }}
       
 
-    - name: Switch to user ivsolow
-      run: su ivsolow
+    # - name: Switch to user ivsolow
+    #   run: su ivsolow
 
-    - name: Change to project directory and git pull
-      run: cd ~/rental_site && git pull
+    # - name: Change to project directory and git pull
+    #   run: cd ~/rental_site && git pull
 
-    - name: Docker-compose down
-      run: docker-compose -f docker-compose.prod.yml down
+    # - name: Docker-compose down
+    #   run: docker-compose -f docker-compose.prod.yml down
 
-    - name: Rebuild containers
-      run: docker-compose -f docker-compose.prod.yml up -d
+    # - name: Rebuild containers
+    #   run: docker-compose -f docker-compose.prod.yml up -d
 
-    - name: Prune Docker Images
-      run: docker image prune -f
+    # - name: Prune Docker Images
+    #   run: docker image prune -f
 
 
