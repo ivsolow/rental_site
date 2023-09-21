@@ -112,10 +112,11 @@ jobs:
     - name: SSH and deploy
       uses: appleboy/ssh-action@v1.0.0
       with:
-        username: ${{ secrets.SSH_LOGIN }}
+        host: ${{ secrets.SSH_LOGIN }}
+        username: ivsolow
         password: ${{ secrets.SSH_PASSWORD }}
         script: |
-          su ivsolow
+          # su ivsolow
           cd ~/rental_site
           git pull
           docker-compose -f docker-compose.prod.yml down
