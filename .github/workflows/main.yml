@@ -113,11 +113,14 @@ jobs:
           user: ${{ secrets.SSH_USER }}
           pass: ${{ secrets.SSH_PASSWORD }}
           run: |
+            set -e
             su ivsolow
             cd /home/ivsolow/rental_site
             git pull
             docker-compose -f docker-compose.prod.yml down
+            sleep 10
             docker-compose -f docker-compose.prod.yml up -d
+            sleep 5
             docker image prune -f
 
     
