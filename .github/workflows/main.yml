@@ -100,3 +100,34 @@ jobs:
           exit 1
         fi
 
+
+  deploy_on_server:
+    runs-on: ubuntu-latest
+    needs: run_tests
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install sshpass
+      run: sudo apt-get install -y sshpass
+
+    - name: SSH Login
+      run: sshpass -p ${{ secrets.SSH_PASSWORD }} ssh ${{ secrets.SSH_LOGIN }}
+
+    - name: Switch to user ivsolow
+      run: su ivsolow
+
+    - name: Change to project directory and git pull
+      run: cd ~/rental_site && git pull
+
+    - name: Docker-compose down
+      run: docker-compose -f docker-compose.prod.yml down
+
+    - name: Rebuild containers
+      run: docker-compose -f docker-compose.prod.yml up -d
+
+    - name: Prune Docker Images
+      run: docker image prune -f
+
+
