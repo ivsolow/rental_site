@@ -114,8 +114,10 @@ jobs:
           pass: ${{ secrets.SSH_PASSWORD }}
           run: |
             set -e
+            echo "Running git pull as user: $(whoami)"
             su ivsolow
             cd /home/ivsolow/rental_site
+            echo "Running git pull as user: $(whoami)"
             git pull
             docker-compose -f docker-compose.prod.yml down
             sleep 10
