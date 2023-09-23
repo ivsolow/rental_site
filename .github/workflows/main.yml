@@ -119,7 +119,7 @@ jobs:
             cd /home/ivsolow/rental_site
             echo "Running git pull as user: $(whoami)"
             git pull
-            docker-compose -f docker-compose.prod.yml down
+            docker-compose -f docker-compose.prod.yml stop
             sleep 10
             docker-compose -f docker-compose.prod.yml up -d
             sleep 5
