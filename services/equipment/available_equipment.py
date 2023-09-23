@@ -11,7 +11,9 @@ from equipment.models import Equipment
 
 def dates_are_valid(date_start: date, date_end: date) -> bool:
     """Check if dates are later than today"""
-    if date_start < date.today() or date_end < date.today() or date_end < date_start:
+    if (date_start < date.today()
+        or date_end < date.today()
+       or date_end < date_start):
         raise ValidationError()
     return True
 
@@ -56,7 +58,8 @@ def get_available_equipment(date_start: date, date_end: date) -> dict:
 
 
 def check_dates_in_cache(date_start: date, date_end: date) -> None:
-    """Check dates. If the requested dates have changed, invalidate the cache"""
+    """Check dates.
+    If the requested dates have changed, invalidate the cache"""
     requested_dates = str(date_start) + str(date_end)
     cache_key = settings.AVAIL_EQUIPMENT_DATES
     cached_dates = cache.get(cache_key)

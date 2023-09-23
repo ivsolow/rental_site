@@ -19,4 +19,9 @@ class RentalsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Rentals
-        fields = ('equipment', 'amount', 'date_start', 'date_end', 'is_started', 'is_closed')
+        fields = ('equipment',
+                  'amount',
+                  'date_start',
+                  'date_end',
+                  'is_started',
+                  'is_closed')

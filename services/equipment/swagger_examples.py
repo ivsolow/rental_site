@@ -4,7 +4,9 @@ EQUIPMENT_LIST_RESPONSE = [
         "id": 4,
         "photos": [
             {
-                "photo": "/media/Equipment/Canyon%20Strive%20CFR/Canyon_Strive_CFR_1.webp"
+                "photo": "/media/Equipment/"
+                         "Canyon%20Strive%20CFR/"
+                         "Canyon_Strive_CFR_1.webp"
             }
         ],
         "category": "bicycles",
@@ -20,7 +22,9 @@ EQUIPMENT_ITEM_RESPONSE = {
     "id": 4,
     "photos": [
         {
-            "photo": "/media/Equipment/Canyon%20Strive%20CFR/Canyon_Strive_CFR_1.webp"
+            "photo": "/media/Equipment/"
+                     "Canyon%20Strive%20CFR/"
+                     "Canyon_Strive_CFR_1.webp"
         }
     ],
     "category": "bicycles",
@@ -37,7 +41,10 @@ EQUIPMENT_ITEM_RESPONSE = {
             "rate": 5,
             "feedback_photos": [
                 {
-                    "photo": "/media/Feedback/user%40example.com%20about%20Canyon%20Strive%20CFR/Canyon_Strive_CFR_1.webp"
+                    "photo": "/media/Feedback/"
+                             "user%40example.com"
+                             "%20about%20Canyon%20Strive%20CFR/"
+                             "Canyon_Strive_CFR_1.webp"
                 }
             ]
         }
@@ -49,6 +56,6 @@ EQUIPMENT_ITEM_RESPONSE = {
 }
 
 AVAIL_EQUIPMENT_INVALID_RESPONSE = {
-    "Error": "Check your dates. They are either in the past or the start date is greater than the end date."
+    "Error": "Check your dates. They are either"
+             " in the past or the start date is greater than the end date."
 }
-

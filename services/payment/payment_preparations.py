@@ -7,7 +7,9 @@ from payment.models import CreatedPayment
 from users.models import CustomUser
 
 
-def get_confirmation_url(user: CustomUser, payment_sum: int, commission: float) -> dict:
+def get_confirmation_url(user: CustomUser,
+                         payment_sum: int,
+                         commission: float) -> dict:
     """Receiving payment link from Yookassa"""
     Configuration.account_id = settings.YOOKASSA_ACCOUNT_ID
     Configuration.secret_key = settings.YOOKASSA_SECRET_KEY
@@ -40,7 +42,9 @@ def get_confirmation_url(user: CustomUser, payment_sum: int, commission: float) 
     }, idempotence_key)
 
     confirmation_url = payment.confirmation.confirmation_url
-    write_data_of_created_payment(user_id, idempotence_key, value_with_commission)
+    write_data_of_created_payment(user_id,
+                                  idempotence_key,
+                                  value_with_commission)
 
     payment_response = {
         'confirmation_url': confirmation_url,

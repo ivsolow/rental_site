@@ -2,13 +2,20 @@ from drf_spectacular.utils import OpenApiResponse, OpenApiExample
 from rest_framework import serializers
 from payment.serializers import PaymentStatusSerializer
 from services.payment.swagger_examples import (
-    CART_SUCCESSFUL_REDIRECT, CART_INVALID_AMOUNT_RESPONSE, CART_INVALID_DATES_RESPONSE,
-    CART_IS_EMPTY, PAYMENT_REQUEST, PAYMENT_RESPONSE, STATUS_REQUEST,
-    INVALID_STATUS_RESPONSE, STATUS_RESPONSE_SUCCESS, STATUS_RESPONSE_CREATED
+    CART_SUCCESSFUL_REDIRECT,
+    CART_INVALID_AMOUNT_RESPONSE,
+    CART_INVALID_DATES_RESPONSE,
+    CART_IS_EMPTY, PAYMENT_REQUEST,
+    PAYMENT_RESPONSE,
+    STATUS_REQUEST,
+    INVALID_STATUS_RESPONSE,
+    STATUS_RESPONSE_SUCCESS,
+    STATUS_RESPONSE_CREATED
 )
 
 CHECK_CART_DECORATOR_KWARGS = {
-    "description": "Perform validation on the cart before proceeding with the payment.",
+    "description": "Perform validation on the cart"
+                   " before proceeding with the payment.",
     "summary": "Cart validation before payment",
     "responses": {
         301: OpenApiResponse(
@@ -47,7 +54,8 @@ CHECK_CART_DECORATOR_KWARGS = {
 }
 
 COMPOSE_PAYMENT_DECORATOR_KWARGS = {
-    "description": "Compose payment data and send it to Yookassa for processing.",
+    "description": "Compose payment data and send "
+                   "it to Yookassa for processing.",
     "summary": "Sending payment data",
     "examples": [
         OpenApiExample(
@@ -64,10 +72,13 @@ COMPOSE_PAYMENT_DECORATOR_KWARGS = {
 }
 
 PAYMENT_STATUS_DECORATOR_KWARGS = {
-    "description": "After initiating a payment, the server awaits a response from the payment system "
-                   "via a webhook. During this time, the frontend sends POST requests to this endpoint "
-                   "using a previously saved idempotence key. If the payment is successfully received, "
-                   "the server responds with the payment status. Otherwise, the status will be 'Created'.",
+    "description": "After initiating a payment,"
+                   " the server awaits a response from the payment system "
+                   "via a webhook. During this time, the frontend sends POST"
+                   " requests to this endpoint using a previously saved"
+                   " idempotence key. If the payment is successfully received,"
+                   " the server responds with the payment status. "
+                   "Otherwise, the status will be 'Created'.",
     "summary": "Receive payment status",
     "responses": {
         200: OpenApiResponse(

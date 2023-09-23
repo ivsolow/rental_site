@@ -8,7 +8,7 @@ from users.models import CustomUser
 
 
 class Rentals(models.Model):
-    equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE, null=True)
+    equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE, null=True)  # noqa: E501
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
     amount = models.PositiveSmallIntegerField(default=0)
     date_start = models.DateField(default=timezone.now)
@@ -23,4 +23,3 @@ class Rentals(models.Model):
 
     def __str__(self):
         return f'{self.equipment.name}: {self.date_start} - {self.date_end}'
-

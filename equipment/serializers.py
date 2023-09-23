@@ -20,8 +20,10 @@ class FeedbackPhotoSerializer(serializers.ModelSerializer):
 
 
 class EquipmentFeedbackSerializer(serializers.ModelSerializer):
-    feedback_photos = FeedbackPhotoSerializer(many=True, read_only=True, source='feedback_photo')
     username = serializers.SerializerMethodField()
+    feedback_photos = FeedbackPhotoSerializer(many=True,
+                                              read_only=True,
+                                              source='feedback_photo')
 
     class Meta:
         model = Feedback
@@ -44,7 +46,9 @@ class EquipmentBaseSerializer(serializers.ModelSerializer):
 
 
 class EquipmentDetailSerializer(EquipmentBaseSerializer):
-    feedback = EquipmentFeedbackSerializer(many=True, read_only=True, source='eq_feedback')
+    feedback = EquipmentFeedbackSerializer(many=True,
+                                           read_only=True,
+                                           source='eq_feedback')
 
 
 class EquipmentListSerializer(EquipmentBaseSerializer):

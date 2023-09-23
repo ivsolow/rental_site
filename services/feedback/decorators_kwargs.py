@@ -35,7 +35,8 @@ FEEDBACK_RETRIEVE_DECORATOR_KWARGS = {
 }
 
 FEEDBACK_CREATE_DECORATOR_KWARGS = {
-    "description": "Add new feedback after passing standard Django serializer validation.",
+    "description": "Add new feedback after passing"
+                   " standard Django serializer validation.",
     "summary": "Add New Feedback",
     "request": AddFeedbackSerializer,
     "responses": {
@@ -134,7 +135,8 @@ FEEDBACK_DELETE_DECORATOR_KWARGS = {
 }
 
 EQUIPMENT_FOR_FEEDBACK_DECORATOR_KWARGS = {
-    "description": "Once the user's rental has ended, they can leave feedback about the used equipment. "
+    "description": "Once the user's rental has ended,"
+                   " they can leave feedback about the used equipment. "
                    "This endpoint lists the available equipment for feedback.",
     "summary": "Equipment for Feedback",
     "examples": [

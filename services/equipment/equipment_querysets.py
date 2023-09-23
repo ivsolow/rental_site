@@ -33,10 +33,12 @@ def get_retrieve_queryset():
                               'eq_feedback',
                               'eq_feedback__feedback_photo',
                               Prefetch('eq_feedback__user',
-                                       queryset=CustomUser.objects.only('id', 'first_name'))
+                                       queryset=CustomUser.objects.only(
+                                                            'id',
+                                                            'first_name')
+                                       )
                               )
                         )
 
         cache.set(cache_key, equipment_item, 60 * 10)
     return equipment_item
-

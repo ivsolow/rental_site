@@ -8,7 +8,8 @@ from equipment.models import Equipment
 
 
 class CartEquipmentSerializer(serializers.ModelSerializer):
-    price = serializers.DecimalField(max_digits=10, decimal_places=2)
+    price = serializers.DecimalField(max_digits=10,
+                                     decimal_places=2)
 
     class Meta:
         model = Equipment
@@ -43,12 +44,19 @@ class AddCartSerializer(serializers.ModelSerializer):
         date_end = attrs.get('date_end')
         if date_start and date_end:
             if date_start < date.today():
-                raise serializers.ValidationError("Start date cannot be in the past.")
+                raise serializers.ValidationError(
+                    "Start date cannot be in the past.")
             if date_end <= date_start:
-                raise serializers.ValidationError("End date cannot be earlier than start date or the same.")
+                raise serializers.ValidationError(
+                    "End date cannot be earlier than start date or the same.")
         return attrs
 
     class Meta:
         model = Cart
-        fields = ['id', 'user', 'equipment', 'amount', 'date_start', 'date_end']
+        fields = ['id',
+                  'user',
+                  'equipment',
+                  'amount',
+                  'date_start',
+                  'date_end']
         read_only_fields = ['user', ]

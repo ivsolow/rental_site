@@ -7,7 +7,9 @@ RENTAL_RESPONSE_EXAMPLE = [
             "category": "bicycles",
             "photos": [
                 {
-                    "photo": "http://127.0.0.1:8000/media/Equipment/Canyon%20Strive%20CFR/Canyon_Strive_CFR_1.webp"
+                    "photo": "http://127.0.0.1:8000/"
+                             "media/Equipment/Canyon%20Strive%20CFR/"
+                             "Canyon_Strive_CFR_1.webp"
                 }
             ]
         },
