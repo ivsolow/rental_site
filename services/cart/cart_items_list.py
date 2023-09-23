@@ -65,7 +65,7 @@ def get_cart_item_data(queryset: dict) -> dict:
     total_positions = 0
     total_summ = Decimal(0.0)
 
-    for item in queryset:   # Generating the content of the cart as a nested JSON
+    for item in queryset:
         equipment_name = item['equipment__name']
         equipment_id = item['equipment__id']
         equipment_price = item['equipment__price']

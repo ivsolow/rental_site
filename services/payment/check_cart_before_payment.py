@@ -54,7 +54,9 @@ def availability_check(request: Request) -> bool:
     return True
 
 
-def get_occupied_amount(equipment: Equipment, date_start: date, date_end: date) -> Rentals:
+def get_occupied_amount(equipment: Equipment,
+                        date_start: date,
+                        date_end: date) -> Rentals:
     """Retrieve the amount of occupied equipment for specific dates."""
     occupied_amount = Rentals.objects.filter(
         equipment=equipment,

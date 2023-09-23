@@ -60,6 +60,8 @@ services:
       - 80:3000
     depends_on:
       - backend
+    env_file:
+      - .env.prod
     volumes:
       - ./frontend/public/:/usr/src/app/public/
       - ./frontend/src/:/usr/src/app/src/

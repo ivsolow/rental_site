@@ -31,8 +31,12 @@ def create_new_payment(webhook_data: dict) -> dict:
 
         user_id = int(payment_data['metadata']['user_id'])
         new_rental_detail = start_new_rental(user_id)
-        total_paid_sum = create_new_rental_info(user_id, payment_data, idempotence_key)
-        task_send_payment_email.delay(new_rental_detail, total_paid_sum, user_id)
+        total_paid_sum = create_new_rental_info(user_id,
+                                                payment_data,
+                                                idempotence_key)
+        task_send_payment_email.delay(new_rental_detail,
+                                      total_paid_sum,
+                                      user_id)
         created_payment.delete()
     message = {
         "payment_status": f'{payment_status}'
@@ -41,16 +45,20 @@ def create_new_payment(webhook_data: dict) -> dict:
 
 
 def validate_webhook_data(webhook_data: dict) -> dict:
-    """Create rental objects for the user upon successful payment and clear the user's cart."""
+    """Create rental objects for the user
+    upon successful payment and clear the user's cart."""
     payment_data = webhook_data.get('object')
-    if not payment_data or not isinstance(payment_data, dict) or 'metadata' not in payment_data:
+    if (not payment_data
+            or not isinstance(payment_data, dict)
+            or 'metadata' not in payment_data):
         raise ValueError('Invalid payment data')
 
     idempotence_key = payment_data['metadata'].get('idempotence_key')
     if not idempotence_key:
         raise ValueError('Invalid idempotence key')
 
-    created_payment = CreatedPayment.objects.filter(idempotence_key=idempotence_key)
+    created_payment = (CreatedPayment.objects.
+                       filter(idempotence_key=idempotence_key))
     if not created_payment.exists():
         raise InvalidKeyPaymentException()
 
@@ -69,13 +77,14 @@ def validate_webhook_data(webhook_data: dict) -> dict:
 
 def start_new_rental(user_id: int) -> list:
     """
-    Create rental objects for the user upon successful payment and clear the user's cart.
+    Create rental objects for the user
+    upon successful payment and clear the user's cart.
     """
     cart_equipment = Cart.objects.filter(user_id=user_id)
 
     equipment_list = []
     for cart_item in cart_equipment:
-        rental = Rentals.objects.create(
+        rental = Rentals.objects.create(  # noqa: F841
             equipment=cart_item.equipment,
             user_id=user_id,
             amount=cart_item.amount,
@@ -99,10 +108,12 @@ def start_new_rental(user_id: int) -> list:
     return equipment_list
 
 
-def create_new_rental_info(user_id: int, payment_data: dict, idempotence_key: str) -> int:
+def create_new_rental_info(user_id: int,
+                           payment_data: dict,
+                           idempotence_key: str) -> int:
     """ Write information about a successful payment to the database."""
     paid_amount = payment_data['amount']['value']
-    payment = UserPaymentDetails.objects.create(
+    payment = UserPaymentDetails.objects.create(  # noqa: F841
         user_id=user_id,
         payment_id=payment_data['id'],
         idempotence_key=idempotence_key,
@@ -115,11 +126,15 @@ def create_new_rental_info(user_id: int, payment_data: dict, idempotence_key: st
     return paid_amount
 
 
-def send_email_success_payment(new_rental_detail: list, total_paid_sum: int, user_id: int) -> None:
+def send_email_success_payment(new_rental_detail: list,
+                               total_paid_sum: int,
+                               user_id: int) -> None:
     """Send an email notification for a successful payment."""
-    message = 'Оплата прошла успешно. Спасибо, что воспользовались нашим прокатом.\n\n' \
-              f"Детали заказа: \n {get_payment_details_string(new_rental_detail)}\n\n" \
-              f"Итоговая сумма: {total_paid_sum} рублей"
+    message = (f'Оплата прошла успешно. '
+               f'Спасибо, что воспользовались нашим прокатом.\n\n'
+               f'Детали заказа: '
+               f'\n {get_payment_details_string(new_rental_detail)}\n\n'
+               f'Итоговая сумма: {total_paid_sum} рублей')
 
     user_email = CustomUser.objects.get(id=user_id).email
     subject = 'Payment Confirmation'
@@ -131,9 +146,12 @@ def send_email_success_payment(new_rental_detail: list, total_paid_sum: int, use
 def get_payment_details_string(new_rental_detail: list) -> str:
     details_string = ''
     for rental_item in new_rental_detail:
-        details_string += f"Снаряжение: {rental_item['equipment']}\n" \
-                          f"Количество: {rental_item['amount']}\n" \
-                          f"Даты проката: {rental_item['date_start']} - {rental_item['date_end']}\n" \
-                          f"Сумма: {rental_item['item_summ']} рублей\n" \
-                          f"{'_' * 40}\n"
+        details_string += (f"Снаряжение: {rental_item['equipment']}\n"
+                           f"Количество: {rental_item['amount']}\n"
+                           f"Даты проката: "
+                           f"{rental_item['date_start']} "
+                           f"- {rental_item['date_end']}\n"
+                           f"Сумма: {rental_item['item_summ']} рублей\n"
+                           f"{'_' * 40}\n")
+
     return details_string

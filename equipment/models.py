@@ -9,9 +9,11 @@ class Equipment(models.Model):
     """Модель для снаряжения"""
     name = models.CharField(max_length=50, unique=True)
     description = models.CharField(max_length=255)
-    category = models.ForeignKey('Category', on_delete=models.PROTECT, related_name='category')
     price = models.DecimalField(max_digits=6, decimal_places=1)
     amount = models.PositiveIntegerField(default=0)
+    category = models.ForeignKey('Category',
+                                 on_delete=models.PROTECT,
+                                 related_name='category')
 
     class Meta:
         verbose_name = 'Снаряжение'

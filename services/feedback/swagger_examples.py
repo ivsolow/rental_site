@@ -10,7 +10,9 @@ FEEDBACK_LIST = [
         "date_created": "2023-08-12",
         "feedback_photo": [
             {
-                "photo": "some_address/media/Feedback/user%40example.com%20about%20Canyon%20Strive%20CFR"
+                "photo": "some_address/media/"
+                         "Feedback/user%40example."
+                         "com%20about%20Canyon%20Strive%20CFR"
                          "/Canyon_Strive_CFR_1.webp"
             }
         ]
@@ -39,7 +41,9 @@ FEEDBACK_RETRIEVE_RESPONSE = {
     "date_created": "2023-08-12",
     "feedback_photo": [
         {
-            "photo": "some_address/media/Feedback/user%40example.com%20about%20Canyon%20Strive%20CFR"
+            "photo": "some_address/media/"
+                     "Feedback/user%40example."
+                     "com%20about%20Canyon%20Strive%20CFR"
                      "/Canyon_Strive_CFR_1.webp"
         }
     ]

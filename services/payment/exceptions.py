@@ -9,7 +9,8 @@ class CartCheckException(APIException):
     def __init__(self, message=None, params=None):
         if self.default_code is None:
             raise NotImplementedError(
-                f"Subclasses of CustomAPIException must define default_code and default_message properties."
+                "Subclasses of CustomAPIException "
+                "must define default_code and default_message properties."
             )
 
         super().__init__(message, code=self.default_code)

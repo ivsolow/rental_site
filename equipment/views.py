@@ -5,12 +5,22 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.exceptions import ValidationError
 
 from equipment.models import Equipment
-from equipment.serializers import EquipmentListSerializer, EquipmentDetailSerializer, EquipmentAvailabilitySerializer, \
-    AvailableEquipmentSerializer
-from services.equipment.available_equipment import dates_are_valid, get_available_equipment
-from services.equipment.decorators_kwargs import EQUIPMENT_LIST_DECORATOR_KWARGS, EQUIPMENT_ITEM_DECORATOR_KWARGS, \
-    AVAIL_EQUIPMENT_DECORATOR_KWARGS
-from services.equipment.equipment_querysets import get_list_queryset, get_retrieve_queryset
+from services.equipment.available_equipment import (dates_are_valid,
+                                                    get_available_equipment)
+from services.equipment.equipment_querysets import (get_list_queryset,
+                                                    get_retrieve_queryset)
+from equipment.serializers import (
+    EquipmentListSerializer,
+    EquipmentDetailSerializer,
+    EquipmentAvailabilitySerializer,
+    AvailableEquipmentSerializer,
+)
+
+from services.equipment.decorators_kwargs import (
+    EQUIPMENT_LIST_DECORATOR_KWARGS,
+    EQUIPMENT_ITEM_DECORATOR_KWARGS,
+    AVAIL_EQUIPMENT_DECORATOR_KWARGS,
+)
 
 
 class EquipmentViewSet(viewsets.ModelViewSet):
@@ -63,12 +73,13 @@ class AvailableEquipmentViewSet(viewsets.ViewSet):
         except ValidationError:
             err_message = {
                 "Error": "Check your dates. "
-                         "They are either in the past or the start date is greater than the end date."
+                         "They are either in the past"
+                         "or the start date is greater than the end date."
             }
             return Response(err_message, status=status.HTTP_400_BAD_REQUEST)
 
         equipment = get_available_equipment(date_start, date_end)
-        equipment_serializer = AvailableEquipmentSerializer(equipment, many=True)
+        equipment_serializer = AvailableEquipmentSerializer(equipment,
+                                                            many=True)
 
         return Response(equipment_serializer.data)
-

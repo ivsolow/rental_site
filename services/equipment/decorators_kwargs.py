@@ -1,5 +1,8 @@
-from drf_spectacular.utils import OpenApiExample, OpenApiResponse, OpenApiParameter
-from equipment.serializers import EquipmentDetailSerializer, AvailableEquipmentSerializer
+from drf_spectacular.utils import (OpenApiExample,
+                                   OpenApiResponse,
+                                   OpenApiParameter)
+from equipment.serializers import (EquipmentDetailSerializer,
+                                   AvailableEquipmentSerializer)
 from services.equipment.swagger_examples import (
     EQUIPMENT_LIST_RESPONSE,
     EQUIPMENT_ITEM_RESPONSE,
@@ -19,7 +22,8 @@ EQUIPMENT_LIST_DECORATOR_KWARGS = {
 
 EQUIPMENT_ITEM_DECORATOR_KWARGS = {
     "description": "Retrieve details of a specific equipment item by its ID. "
-                   "This endpoint offers additional information, including list user feedback.",
+                   "This endpoint offers additional information,"
+                   " including list user feedback.",
     "summary": "Get equipment item by ID",
     "responses": {
         200: OpenApiResponse(
@@ -35,7 +39,8 @@ EQUIPMENT_ITEM_DECORATOR_KWARGS = {
 }
 
 AVAIL_EQUIPMENT_DECORATOR_KWARGS = {
-    "description": "Retrieve all available equipment for the specified rental dates.",
+    "description": "Retrieve all available equipment for"
+                   " the specified rental dates.",
     "summary": "Get available equipment for rental dates",
     "responses": {
         200: OpenApiResponse(
