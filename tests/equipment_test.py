@@ -173,12 +173,12 @@ def test_cart_availability(equipment_1, equipment_2, api_client, user):
                '?date_start=2023-05-29&date_end=2023-05-30')
     response = api_client.get(get_url)
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-
     # наличие в указанные даты
     get_url_1 = (reverse('free_equipment') +
-                 '?date_start={today}&date_end={today + delta}')
+                 f'?date_start={today}&date_end={today + delta}')
     response = api_client.get(get_url_1)
     assert len(response.data) == 2
+    print(response.data)
     assert response.data[0]['available_amount'] == 5
     assert response.data[1]['available_amount'] == 8
 

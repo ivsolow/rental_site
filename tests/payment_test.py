@@ -7,10 +7,13 @@ from django.urls import reverse
 
 from cart.models import Cart
 from .cart_test import cart_create, cart_create_2  # noqa: F401
-from .equipment_test import api_client  # noqa: F401
 from payment.models import CreatedPayment, UserPaymentDetails
 from rentals.models import Rentals
 from .rentals_test import rental_create  # noqa: F401
+from .equipment_test import (user,  # noqa: F401
+                             api_client,
+                             equipment_1,
+                             equipment_2)
 
 
 @pytest.fixture

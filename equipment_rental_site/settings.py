@@ -81,27 +81,26 @@ WSGI_APPLICATION = 'equipment_rental_site.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+#
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'HOST': os.environ.get('DB_HOST'),
+#         'NAME': os.environ.get('POSTGRES_DB'),
+#         'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+#         'USER': os.environ.get('POSTGRES_USER'),
+#     },
+# }
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': os.environ.get('DB_HOST'),
-        'NAME': os.environ.get('POSTGRES_DB'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-        'USER': os.environ.get('POSTGRES_USER'),
-    },
+        'HOST': 'localhost',
+        'NAME': 'equipment_db',
+        'PASSWORD': 1234,
+        'USER': 'postgres',
+    }
 }
-
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'HOST': 'localhost',
-#         'NAME': 'equipment_db',
-#         'PASSWORD': 1234,
-#         'USER': 'postgres',
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
