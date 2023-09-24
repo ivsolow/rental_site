@@ -129,7 +129,7 @@ def test_payment_api_view(api_client):  # noqa: F811
     }
     response = api_client.post(url, data)
     assert response.status_code == 200
-    assert type(response.data) == dict
+    assert isinstance(response.data, dict)
     yokassa_url = response.data['confirmation_url']
     assert 'https://yoomoney.ru/checkout/payments/v2/contract' in yokassa_url
     response_get = requests.get(yokassa_url)
