@@ -9,7 +9,10 @@ from feedback.serializers import (
     AddFeedbackSerializer,
     FeedbackEquipmentSerializer
 )
-from services.feedback.get_and_create_qurysets import get_feedback_queryset, get_equipment_for_feedback_queryset
+from services.feedback.get_and_create_qurysets import (
+                                get_feedback_queryset,
+                                get_equipment_for_feedback_queryset
+)
 from services.feedback.decorators_kwargs import (
     FEEDBACK_CREATE_DECORATOR_KWARGS,
     EQUIPMENT_FOR_FEEDBACK_DECORATOR_KWARGS,
@@ -28,8 +31,12 @@ class FeedbackViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def get_equipment_for_feedback(self, request):
         user = request.user
-        equipment_for_feedback_queryset = get_equipment_for_feedback_queryset(user)
-        serializer = FeedbackEquipmentSerializer(equipment_for_feedback_queryset, many=True)
+        equipment_for_feedback_queryset = (
+            get_equipment_for_feedback_queryset(user))
+        serializer = FeedbackEquipmentSerializer(
+            equipment_for_feedback_queryset,
+            many=True
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def get_queryset(self):
@@ -46,11 +53,17 @@ class FeedbackViewSet(viewsets.ModelViewSet):
 
     @extend_schema(**FEEDBACK_CREATE_DECORATOR_KWARGS)
     def create(self, request, *args, **kwargs):
-        serializer = AddFeedbackSerializer(data=request.data, context={'request': request})
+        serializer = AddFeedbackSerializer(
+            data=request.data,
+            context={'request': request}
+        )
         serializer.is_valid(raise_exception=True)
         feedback = serializer.save()
         response_serializer = FeedbackSerializer(feedback)
-        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(
+            response_serializer.data,
+            status=status.HTTP_201_CREATED
+        )
 
     @extend_schema(**FEEDBACK_UPDATE_DECORATOR_KWARGS)
     def update(self, request, *args, **kwargs):
@@ -66,4 +79,5 @@ class FeedbackViewSet(viewsets.ModelViewSet):
             return Response(data=message_data, status=status.HTTP_200_OK)
         else:
             message_data = {"detail": "Object not found."}
-            return Response(data=message_data, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data=message_data,
+                            status=status.HTTP_400_BAD_REQUEST)

@@ -4,11 +4,14 @@ from cart.models import Cart
 import pytest
 from django.urls import reverse
 from rest_framework import status
-from .equipment_test import user, api_client, equipment_1, equipment_2
+from .equipment_test import (user,  # noqa: F811, F401
+                             api_client,
+                             equipment_1,
+                             equipment_2)
 
 
 @pytest.fixture
-def cart_create(user, equipment_1):
+def cart_create(user, equipment_1):  # noqa: F811
     today = datetime.date.today()
     delta = datetime.timedelta(days=5)
     cart = Cart.objects.create(
@@ -22,7 +25,7 @@ def cart_create(user, equipment_1):
 
 
 @pytest.fixture
-def cart_create_2(user, equipment_2):
+def cart_create_2(user, equipment_2):  # noqa: F811
     today = datetime.date.today()
     delta1 = datetime.timedelta(days=2)
     delta2 = datetime.timedelta(days=8)
@@ -37,7 +40,7 @@ def cart_create_2(user, equipment_2):
 
 
 @pytest.mark.django_db()
-def test_list_cart_items(api_client):
+def test_list_cart_items(api_client):  # noqa: F811
     """
     Проверка полей пустой корзины
     """
@@ -76,7 +79,9 @@ def test_list_cart_items(api_client):
 
 
 @pytest.mark.django_db
-def test_add_cart_same_instance(api_client, cart_create, equipment_1):
+def test_add_cart_same_instance(api_client,  # noqa: F811
+                                cart_create,
+                                equipment_1):  # noqa: F811
     """
     Проверка на добавление количества к тому же объекту корзину
     при совпадении дат и и названия снаряжения
@@ -87,11 +92,14 @@ def test_add_cart_same_instance(api_client, cart_create, equipment_1):
     print(get_response.data)
     assert get_response.status_code == status.HTTP_200_OK
     assert get_response.data['cart_item_data'][0]['amount'] == 3
-    assert get_response.data['cart_item_data'][0]['equipment']['name'] == equipment_1.name
+    assert get_response.data[
+               'cart_item_data'][0]['equipment']['name'] == equipment_1.name
 
 
 @pytest.mark.django_db
-def test_add_cart_different_instances(api_client, cart_create, cart_create_2):
+def test_add_cart_different_instances(api_client,  # noqa: F811
+                                      cart_create,
+                                      cart_create_2):
     """
     Проверка на добавление количества к разным объектам корзины
     при несовпадении дат и/или названия снаряжения
@@ -106,7 +114,7 @@ def test_add_cart_different_instances(api_client, cart_create, cart_create_2):
 
 
 @pytest.mark.django_db
-def test_add_cart_by_api(api_client, user, equipment_1):
+def test_add_cart_by_api(api_client, user, equipment_1):   # noqa: F811
     """
     Добавление объектов в корзину через клиента
     """
@@ -141,7 +149,7 @@ def test_add_cart_by_api(api_client, user, equipment_1):
 
 
 @pytest.mark.django_db
-def test_delete_cart_items(cart_create, api_client):
+def test_delete_cart_items(cart_create, api_client):   # noqa: F811
     get_url = reverse('cart')
     get_response = api_client.get(get_url)
     pk = get_response.data['cart_item_data'][0]['cart_id']
@@ -158,7 +166,7 @@ def test_delete_cart_items(cart_create, api_client):
 
 
 @pytest.mark.django_db
-def test_delete_cart_object(cart_create, api_client):
+def test_delete_cart_object(cart_create, api_client):   # noqa: F811
     get_url = reverse('cart')
     get_response = api_client.get(get_url)
     pk = get_response.data['cart_item_data'][0]['cart_id']
@@ -166,7 +174,7 @@ def test_delete_cart_object(cart_create, api_client):
     url = reverse('cart_delete', kwargs={'pk': pk, 'amount': 3})
     delete_response = api_client.delete(url)
     # ответ сервера после удаления
-    delete_message = messge = {"response": "Cart object deleted successfully"}
+    delete_message = {"response": "Cart object deleted successfully"}
     assert delete_response.status_code == 200
     assert delete_response.data == delete_message
     get_response = api_client.get(get_url)
@@ -175,7 +183,7 @@ def test_delete_cart_object(cart_create, api_client):
 
 
 @pytest.mark.django_db
-def test_delete_by_invalid_pk(api_client):
+def test_delete_by_invalid_pk(api_client):   # noqa: F811
     get_url = reverse('cart')
     get_response = api_client.get(get_url)
     pk = 1
@@ -187,4 +195,3 @@ def test_delete_by_invalid_pk(api_client):
     assert delete_response.data['error'] == 'Cart item not found.'
     get_response = api_client.get(get_url)
     assert len(get_response.data['cart_item_data']) == 0
-#

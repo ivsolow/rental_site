@@ -1,4 +1,5 @@
-from djoser.serializers import UserCreateSerializer as BaseUserRegistrationSerializer
+from djoser.serializers import (
+    UserCreateSerializer as BaseUserRegistrationSerializer)
 
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
@@ -10,7 +11,8 @@ User = get_user_model()
 
 
 class UserRegistrationSerializer(BaseUserRegistrationSerializer):
-    confirm_password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
+    confirm_password = serializers.CharField(style={'input_type': 'password'},
+                                             write_only=True)
 
     class Meta(BaseUserRegistrationSerializer.Meta):
         fields = ('email', 'password', 'confirm_password')

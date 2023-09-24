@@ -9,8 +9,10 @@ from users.models import CustomUser
 
 
 class UserCreationForm(forms.ModelForm):
-    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
+    password1 = forms.CharField(label='Password',
+                                widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Password confirmation',
+                                widget=forms.PasswordInput)
 
     class Meta:
         model = CustomUser
@@ -58,7 +60,9 @@ class UserAdmin(BaseUserAdmin):
     add_form = UserCreationForm
     fieldsets = (
         (None, {"fields": ("email", "password")}),
-        (_("Personal info"), {"fields": ("first_name", "last_name", "date_of_birth")}),
+        (_("Personal info"), {"fields": (
+            "first_name", "last_name", "date_of_birth"
+        )}),
         (
             _("Permissions"),
             {
@@ -78,7 +82,11 @@ class UserAdmin(BaseUserAdmin):
             None,
             {
                 "classes": ("wide",),
-                "fields": ('email', 'first_name', 'last_name', 'password1', 'password2'),
+                "fields": ('email',
+                           'first_name',
+                           'last_name',
+                           'password1',
+                           'password2'),
             },
         ),
     )
@@ -91,4 +99,3 @@ class UserAdmin(BaseUserAdmin):
 
 admin.site.register(CustomUser, UserAdmin)
 admin.site.unregister(Group)
-

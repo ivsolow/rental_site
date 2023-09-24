@@ -1,4 +1,3 @@
-import datetime
 import json
 
 import requests
@@ -7,21 +6,21 @@ import pytest
 from django.urls import reverse
 
 from cart.models import Cart
-from .cart_test import cart_create, cart_create_2
-from .equipment_test import user, api_client, equipment_1, equipment_2
+from .cart_test import cart_create, cart_create_2  # noqa: F401
+from .equipment_test import api_client  # noqa: F401
 from payment.models import CreatedPayment, UserPaymentDetails
 from rentals.models import Rentals
-from .rentals_test import rental_create
+from .rentals_test import rental_create  # noqa: F401
 
 
 @pytest.fixture
-def yookassa_response_create(api_client):
+def yookassa_response_create(api_client):  # noqa: F811
     url = reverse('payment')
     data = {
         "payment_sum": "500",
         "commission": "3.5"
     }
-    response = api_client.post(url, data)
+    response = api_client.post(url, data)  # noqa: F841
 
     idempotence_key = CreatedPayment.objects.first().idempotence_key
     yookassa_response = {
@@ -87,7 +86,7 @@ def yookassa_response_create(api_client):
 
 
 @pytest.mark.django_db
-def test_check_empty_cart(api_client):
+def test_check_empty_cart(api_client):  # noqa: F811
     url = reverse('cart_check')
     response = api_client.get(url)
     assert response.status_code == 400
@@ -95,7 +94,9 @@ def test_check_empty_cart(api_client):
 
 
 @pytest.mark.django_db
-def test_check_cart_all_correct(api_client, cart_create, cart_create_2):
+def test_check_cart_all_correct(api_client,  # noqa: F811
+                                cart_create,  # noqa: F811
+                                cart_create_2):  # noqa: F811
 
     url = reverse('cart_check')
     response = api_client.get(url)
@@ -104,7 +105,10 @@ def test_check_cart_all_correct(api_client, cart_create, cart_create_2):
 
 
 @pytest.mark.django_db
-def test_check_cart_incorrect_amount(api_client, rental_create, cart_create, cart_create_2):
+def test_check_cart_incorrect_amount(api_client,  # noqa: F811
+                                     rental_create,  # noqa: F811
+                                     cart_create,  # noqa: F811
+                                     cart_create_2):  # noqa: F811
     url = reverse('cart_check')
     response = api_client.get(url)
     print(response.data)
@@ -113,7 +117,7 @@ def test_check_cart_incorrect_amount(api_client, rental_create, cart_create, car
 
 
 @pytest.mark.django_db
-def test_payment_api_view(api_client):
+def test_payment_api_view(api_client):  # noqa: F811
     # Подготовка данных для запроса
     url = reverse('payment')
     data = {
@@ -130,9 +134,9 @@ def test_payment_api_view(api_client):
 
 
 @pytest.mark.django_db
-def test_yokassa_successful_response(api_client,
-                                     cart_create,
-                                     cart_create_2,
+def test_yokassa_successful_response(api_client,  # noqa: F811
+                                     cart_create,  # noqa: F811
+                                     cart_create_2,  # noqa: F811
                                      yookassa_response_create):
     yookassa_response, idempotence_key = yookassa_response_create
 
@@ -151,7 +155,9 @@ def test_yokassa_successful_response(api_client,
     # получаем ответ от нашего сервера
     url = reverse('payment_response')
     data = json.dumps(yookassa_response)
-    response_post = api_client.post(url, data=data, content_type='application/json')
+    response_post = api_client.post(url,
+                                    data=data,
+                                    content_type='application/json')
     assert response_post.status_code == 200
 
     # проверяем, что корзина пустая
@@ -167,25 +173,29 @@ def test_yokassa_successful_response(api_client,
     rentals_url = reverse('rentals-list')
     response_rentals = api_client.get(rentals_url)
     assert len(response_rentals.data) == 2
-    assert response_rentals.data[0]['equipment']['name'] == 'Giant Trance Advanced Pro'
+    assert response_rentals.data[
+               0]['equipment']['name'] == 'Giant Trance Advanced Pro'
     assert response_rentals.data[1]['amount'] == 3
 
     # проверяем запись данных платежа
-    # idempotence_key = 'b8b9364d-cbcf-4754-9183-20ad03397c00'
-    payment_details = UserPaymentDetails.objects.filter(idempotence_key=idempotence_key)
+    payment_details = (UserPaymentDetails.objects.
+                       filter(idempotence_key=idempotence_key))
     assert len(payment_details) == 1
     assert payment_details.first().income_amount_value == 500
 
 
 @pytest.mark.django_db
-def test_yokassa_bad_response(api_client,
-                              cart_create,
-                              cart_create_2,
+def test_yokassa_bad_response(api_client,  # noqa: F811
+                              cart_create,  # noqa: F811
+                              cart_create_2,  # noqa: F811
                               yookassa_response_create):
     # проверка некорректного idempotence_key
     yookassa_response = yookassa_response_create[0]
-    yookassa_response['object']['metadata']['idempotence_key'] = 'b8b9364d-cbcf-4754-9183-20ad03397c00'
+    idempot_key = 'b8b9364d-cbcf-4754-9183-20ad03397c00'
+    yookassa_response['object']['metadata']['idempotence_key'] = idempot_key
     url = reverse('payment_response')
     data = json.dumps(yookassa_response)
-    response_post = api_client.post(url, data=data, content_type='application/json')
+    response_post = api_client.post(url,
+                                    data=data,
+                                    content_type='application/json')
     assert response_post.status_code == 400
