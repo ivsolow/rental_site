@@ -5,8 +5,8 @@ import { remove } from 'react-cookies';
 function Logout() {
   const navigate = useNavigate();
   const [isLoggedOut, setIsLoggedOut] = useState(false);
-  const ipAddress = process.env.BACKEND_SERVER_IP || '0.0.0.0';
-  const port = process.env.BACKEND_SERVER_PORT || '1337';
+  const ipAddress = process.env.REACT_APP_BACKEND_SERVER_IP || '0.0.0.0';
+  const port = process.env.REACT_APP_BACKEND_SERVER_PORT || '1337';
   const serverAddress = `http://${ipAddress}:${port}`;
 
   useEffect(() => {
