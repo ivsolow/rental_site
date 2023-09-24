@@ -8,7 +8,6 @@ from equipment.models import Equipment, Category
 from rest_framework.test import APIClient
 from rentals.models import Rentals
 from users.models import CustomUser
-from .feedback_test import feedback_1, feedback_2, feedback_3  # noqa: F401
 
 
 @pytest.fixture
@@ -126,6 +125,10 @@ def test_search_and_filter(api_client, equipment_1, equipment_2, equipment_3):
     assert response.data[0]['price'] == '3000.0'
     assert response.data[1]['price'] == '1500.0'
     assert response.data[2]['price'] == '1000.0'
+
+
+from .feedback_test import feedback_1, feedback_2, feedback_3  # noqa: F401, E402, E501
+# keep import here to avoid circular import error
 
 
 @pytest.mark.django_db
