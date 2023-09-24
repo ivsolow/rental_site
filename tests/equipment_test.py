@@ -45,7 +45,8 @@ def equipment_3():
         id=3,
         name='Salomon XDR 80 TI',
         category=category,
-        description='Ski provides excellent precision and stability when riding the slopes',
+        description='Ski provides excellent precision'
+                    ' and stability when riding the slopes',
         price=1500,
         amount=8
     )
@@ -79,7 +80,8 @@ def test_equipment(equipment_1, equipment_2):
     equipment = response.data[0]
     assert equipment['name'] == 'Tent MSR Freelite 2'
     assert equipment['category'] == 'Hiking'
-    assert equipment['description'] == 'Good balance of weight & livability for solo hikers'
+    assert equipment['description'] == ('Good balance of weight '
+                                        '& livability for solo hikers')
     assert equipment['price'] == '1000.0'
     assert equipment['amount'] == 10
 
@@ -97,11 +99,11 @@ def test_search_and_filter(api_client, equipment_1, equipment_2, equipment_3):
     assert len(response.data) == 3
 
     # поиск
-    get_url = reverse('equipment') + f'?search=ski'
+    get_url = reverse('equipment') + '?search=ski'
     response = api_client.get(get_url)
     assert len(response.data) == 1
     assert response.data[0]['name'] == 'Salomon XDR 80 TI'
-    get_url = reverse('equipment') + f'?search=for'
+    get_url = reverse('equipment') + '?search=for'
     response = api_client.get(get_url)
     assert len(response.data) == 2
     assert response.data[0]['category'] == 'Hiking'
@@ -125,11 +127,15 @@ def test_search_and_filter(api_client, equipment_1, equipment_2, equipment_3):
     assert response.data[2]['price'] == '1000.0'
 
 
-from .feedback_test import feedback_1, feedback_2, feedback_3
+from .feedback_test import feedback_1, feedback_2, feedback_3  # noqa: F401, E402, E501
+# keep import here to avoid circular import error
 
 
 @pytest.mark.django_db
-def test_feedback_from_equipment(equipment_3, feedback_1, feedback_2, feedback_3, ):
+def test_feedback_from_equipment(equipment_3,
+                                 feedback_1,   # noqa: F811
+                                 feedback_2,   # noqa: F811
+                                 feedback_3):   # noqa: F811
     """Проверка отзывов у снаряжения по url 'api/v1/equipment/'"""
     api_client = APIClient()
     list_url = reverse('equipment')
@@ -154,7 +160,7 @@ def test_cart_availability(equipment_1, equipment_2, api_client, user):
     """
     today = datetime.date.today()
     delta = datetime.timedelta(days=5)
-    first_buy = Rentals.objects.create(
+    first_buy = Rentals.objects.create(  # noqa: F841
         user=user,
         equipment=equipment_1,
         amount=2,
@@ -162,20 +168,22 @@ def test_cart_availability(equipment_1, equipment_2, api_client, user):
         date_end=f'{today + delta}'
     )
 
-    #проверка на прошедшее время
-    get_url = reverse('free_equipment') + f'?date_start=2023-05-29&date_end=2023-05-30'
+    # проверка на прошедшее время
+    get_url = (reverse('free_equipment') +
+               '?date_start=2023-05-29&date_end=2023-05-30')
     response = api_client.get(get_url)
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-
     # наличие в указанные даты
-    get_url_1 = reverse('free_equipment') + f'?date_start={today}&date_end={today + delta}'
+    get_url_1 = (reverse('free_equipment') +
+                 f'?date_start={today}&date_end={today + delta}')
     response = api_client.get(get_url_1)
     assert len(response.data) == 2
+    print(response.data)
     assert response.data[0]['available_amount'] == 5
     assert response.data[1]['available_amount'] == 8
 
     # если в наличии 0 снаряжения, оно не отображается
-    second_buy = Rentals.objects.create(
+    second_buy = Rentals.objects.create(   # noqa: F841
         user=user,
         equipment=equipment_2,
         amount=5,
@@ -190,7 +198,8 @@ def test_cart_availability(equipment_1, equipment_2, api_client, user):
     # наличие в даты, которые пересекаются с занятой датой хотя бы в 1 день
     delta_1 = datetime.timedelta(days=5)
     delta_2 = datetime.timedelta(days=10)
-    get_url_2 = reverse('free_equipment') + f'?date_start={today + delta_1}&date_end={today + delta_2}'
+    get_url_2 = (reverse('free_equipment') +
+                 f'?date_start={today + delta_1}&date_end={today + delta_2}')
     response = api_client.get(get_url_2)
     assert len(response.data) == 1
     assert response.data[0]['available_amount'] == 8
@@ -198,7 +207,8 @@ def test_cart_availability(equipment_1, equipment_2, api_client, user):
     # наличие в даты, когда всё свободно
     delta_3 = datetime.timedelta(days=6)
     delta_4 = datetime.timedelta(days=8)
-    get_url_3 = reverse('free_equipment') + f'?date_start={today + delta_3}&date_end={today + delta_4}'
+    get_url_3 = (reverse('free_equipment') +
+                 f'?date_start={today + delta_3}&date_end={today + delta_4}')
     response = api_client.get(get_url_3)
     assert len(response.data) == 2
     assert response.data[0]['available_amount'] == 5
