@@ -14,6 +14,8 @@ RUN curl -L https://github.com/a8m/envsubst/releases/download/v1.1.0/envsubst-`u
     chmod +x envsubst && \
     mv envsubst /usr/local/bin
 RUN mkdir -p /etc/nginx/conf.d/
+ENV REACT_APP_BACKEND_SERVER_IP=31.129.104.187
+ENV REACT_APP_BACKEND_SERVER_PORT=1337
 COPY ./nginx.config /etc/nginx/nginx.template
 RUN chown -R nginx:nginx /etc/nginx/conf.d/
 CMD ["/bin/sh", "-c", "envsubst < /etc/nginx/nginx.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
