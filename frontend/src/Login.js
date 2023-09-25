@@ -2,14 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import cookie from 'react-cookies';
 import axios from 'axios';
+import serverAddress from './config';
+
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const ipAddress = process.env.REACT_APP_BACKEND_SERVER_IP || '0.0.0.0';
-  const port = process.env.REACT_APP_BACKEND_SERVER_PORT || '1337';
-  const serverAddress = `http://${ipAddress}:${port}`;
 
   useEffect(() => {
     const authToken = cookie.load('equip_rent_token');

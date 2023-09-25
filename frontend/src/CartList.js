@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import cookie from 'react-cookies'; // Импортируем библиотеку для работы с куками
 import { Link, useNavigate } from 'react-router-dom';
+import serverAddress from './config';
 
 
 function Cart() {
@@ -11,9 +12,6 @@ function Cart() {
   useEffect(() => {
     // Получаем токен из куки
     const authToken = cookie.load('equip_rent_token');
-      const ipAddress = process.env.REACT_APP_BACKEND_SERVER_IP || '0.0.0.0';
-      const port = process.env.REACT_APP_BACKEND_SERVER_PORT || '1337';
-      const serverAddress = `http://${ipAddress}:${port}`;
 
     if (!authToken) {
       // Если токен отсутствует, устанавливаем сообщение об ошибке
