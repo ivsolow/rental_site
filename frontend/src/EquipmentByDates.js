@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import cookie from 'react-cookies';
+import serverAddress from './config';
 
 // Компонент для формы выбора дат
 function DateSelectionForm({ startDate, endDate, setStartDate, setEndDate, handleSubmit }) {
@@ -60,9 +61,6 @@ function EquipmentByDates() {
   const [error, setError] = useState(null);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [notification, setNotification] = useState(null);
-  const ipAddress = process.env.REACT_APP_BACKEND_SERVER_IP || '0.0.0.0';
-  const port = process.env.REACT_APP_BACKEND_SERVER_PORT || '1337';
-  const serverAddress = `http://${ipAddress}:${port}`;
 
   const handleSubmit = async (e) => {
     e.preventDefault();

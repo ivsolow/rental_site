@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import serverAddress from './config';
 
 class EquipmentList extends Component {
   constructor(props) {
@@ -7,15 +8,10 @@ class EquipmentList extends Component {
     this.state = {
       equipmentList: [], // Список снаряжения
     };
-    this.serverAddress = `http://${process.env.REACT_APP_BACKEND_SERVER_IP || '0.0.0.0'}:${
-  process.env.REACT_APP_BACKEND_SERVER_PORT || '1337'}`;
   }
 
   componentDidMount() {
-      const ipAddress = process.env.REACT_APP_BACKEND_SERVER_IP || '0.0.0.0';
-      const port = process.env.REACT_APP_BACKEND_SERVER_PORT || '1337';
-      const serverAddress = `http://${ipAddress}:${port}`;
-    fetch(`${this.serverAddress}/api/v1/equipment/`)
+    fetch(`${serverAddress}/api/v1/equipment/`)
       .then(response => response.json())
       .then(data => {
         this.setState({ equipmentList: data });
@@ -37,7 +33,7 @@ class EquipmentList extends Component {
               <p>Rating: {item.rating || '-'}</p>
               {item.photos.map((photo, index) => (
                 <Link key={index} to={`/equipment/${item.id}`}>
-                  <img src={`${this.serverAddress}${photo.photo}`} alt={`Equipment ${item.id} - ${index}`} width='500'/>
+                  <img src={`${serverAddress}${photo.photo}`} alt={`Equipment ${item.id} - ${index}`} width='500' />
                 </Link>
               ))}
             </li>

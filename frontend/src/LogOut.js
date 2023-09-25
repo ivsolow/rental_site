@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { remove } from 'react-cookies';
+import serverAddress from './config';
+
 
 function Logout() {
   const navigate = useNavigate();
   const [isLoggedOut, setIsLoggedOut] = useState(false);
-  const ipAddress = process.env.REACT_APP_BACKEND_SERVER_IP || '0.0.0.0';
-  const port = process.env.REACT_APP_BACKEND_SERVER_PORT || '1337';
-  const serverAddress = `http://${ipAddress}:${port}`;
 
   useEffect(() => {
     // Получить токен из куки

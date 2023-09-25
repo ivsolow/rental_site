@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import './custom_styles.css';
+import serverAddress from './config';
 
 function EquipmentDetail() {
   const { id } = useParams();
   const [equipment, setEquipment] = useState({});
-  const ipAddress = process.env.REACT_APP_BACKEND_SERVER_IP || '0.0.0.0';
-  const port = process.env.REACT_APP_BACKEND_SERVER_PORT || '1337';
-  const serverAddress = `http://${ipAddress}:${port}`;
 
   useEffect(() => {
     fetch(`${serverAddress}/api/v1/equipment/${id}`)
@@ -30,6 +28,16 @@ function EquipmentDetail() {
       <p>Category: {equipment.category}</p>
       <p>Price: {equipment.price}</p>
       <p>Amount: {equipment.amount}</p>
+
+      <h3>Photos</h3>
+      {equipment.photos.map((photo, index) => (
+        <img
+          key={index}
+          src={`${serverAddress}${photo.photo}`}
+          alt={`Equipment Photo ${index + 1}`}
+          width="800"
+        />
+      ))}
       
       <h3>Reviews</h3>
       <p>Total Reviews: {equipment.feedback.length}</p>
