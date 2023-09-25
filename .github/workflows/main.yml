@@ -101,9 +101,9 @@ jobs:
           exit 1
         fi
 
-
   deploy_on_server:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
     needs: run_tests
 
     steps:
@@ -122,61 +122,9 @@ jobs:
             git pull
             docker-compose -f docker-compose.prod.yml stop
             sleep 10
-            docker-compose -f docker-compose.prod.yml up -d
+            docker-compose -f docker-compose.prod.yml up --build -d
             sleep 5
             docker image prune -f
 
-    
-    # - name: Install sshpass
-    #   run: sudo apt-get install -y sshpass
-
-    # - name: SSH and deploy
-    #   run: |
-    #     sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd /home/ivsolow/rental_site && git pull && docker-compose -f docker-compose.prod.yml down && docker-compose -f docker-compose.prod.yml up -d && docker image prune -f"
-
-        # sshpass -p  "echo heeeyy!!"
-        # "su ivsolow && cd ~/rental_site && git pull && docker-compose -f docker-compose.prod.yml down && docker-compose -f docker-compose.prod.yml up -d && docker image prune -f"
-
-    #sshpass -p ${{ secrets.SSH_PASSWORD }} ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
-    # steps:
-    # # - name: Checkout repository
-    # #   uses: actions/checkout@v2
-
-    # - name: SSH and deploy
-    #   uses: appleboy/ssh-action@v1.0.0
-    #   with:
-    #     host: ${{ secrets.SSH_HOST }}
-    #     username: ${{ secrets.USER }}
-    #     password: ${{ secrets.SSH_PASSWORD }}
-    #     script: |
-    #       su ivsolow
-    #       cd ~/rental_site
-    #       git pull
-    #       docker-compose -f docker-compose.prod.yml down
-    #       docker-compose -f docker-compose.prod.yml up -d
-    #       docker image prune -f
-    
-    # - name: SSH Login
-    #   run: |
-    #       echo "$SSH_PRIVATE_KEY" > ssh_key
-    #       chmod 600 ssh_key
-    #       ssh -i ssh_key ivsolow@31.129.104.187
-    #       sshpass -p ${{ secrets.SSH_PASSWORD }} ssh ${{ secrets.SSH_LOGIN }}
-      
-
-    # - name: Switch to user ivsolow
-    #   run: su ivsolow
-
-    # - name: Change to project directory and git pull
-    #   run: cd ~/rental_site && git pull
-
-    # - name: Docker-compose down
-    #   run: docker-compose -f docker-compose.prod.yml down
-
-    # - name: Rebuild containers
-    #   run: docker-compose -f docker-compose.prod.yml up -d
-
-    # - name: Prune Docker Images
-    #   run: docker image prune -f
-
+ 
 
